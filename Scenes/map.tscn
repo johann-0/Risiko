@@ -1,0 +1,36 @@
+[gd_scene load_steps=8 format=3 uid="uid://bteu6rr1m2jya"]
+
+[ext_resource type="Texture2D" uid="uid://c7kdkrqlypb8k" path="res://Assets/maps/mouse_map.png" id="1_prxjd"]
+[ext_resource type="Script" path="res://Scripts/map.gd" id="2_wnghg"]
+[ext_resource type="Script" path="res://Scripts/MouseMap.gd" id="3_ognea"]
+[ext_resource type="Texture2D" uid="uid://b0k6bh55hymx6" path="res://Assets/maps/debug_map.png" id="3_u7p1w"]
+[ext_resource type="Texture2D" uid="uid://b2ymyq75gbxlc" path="res://Assets/maps/wasteland_map.png" id="5_vos11"]
+[ext_resource type="Shader" path="res://Shaders/testshader.gdshader" id="6_70vmw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7jssx"]
+shader = ExtResource("6_70vmw")
+shader_parameter/base_color = null
+shader_parameter/colors = null
+
+[node name="Map" type="Node2D"]
+script = ExtResource("2_wnghg")
+
+[node name="MouseMap" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("1_prxjd")
+centered = false
+script = ExtResource("3_ognea")
+
+[node name="DebugMap" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_u7p1w")
+centered = false
+
+[node name="WastelandMap" type="Sprite2D" parent="."]
+texture = ExtResource("5_vos11")
+centered = false
+
+[node name="Map" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_7jssx")
+texture = ExtResource("1_prxjd")
+centered = false

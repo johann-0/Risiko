@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0d7nvx4yjxy2"]
+
+[ext_resource type="Script" path="res://Scripts/game.gd" id="1_8l15m"]
+[ext_resource type="Script" path="res://Scripts/camera_input.gd" id="3_x3dxi"]
+[ext_resource type="PackedScene" uid="uid://bteu6rr1m2jya" path="res://Scenes/map.tscn" id="5_yq1fu"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_8l15m")
+
+[node name="Camera" type="Camera2D" parent="." node_paths=PackedStringArray("map")]
+anchor_mode = 0
+script = ExtResource("3_x3dxi")
+map = NodePath("../LeftMap")
+
+[node name="LeftMap" parent="." instance=ExtResource("5_yq1fu")]
+
+[node name="RightMap" parent="." instance=ExtResource("5_yq1fu")]
+position = Vector2(1227, 0)
+
+[connection signal="map_prov_clicked" from="LeftMap" to="." method="_on_left_map_map_prov_clicked"]
+[connection signal="map_prov_clicked" from="RightMap" to="." method="_on_right_map_map_prov_clicked"]

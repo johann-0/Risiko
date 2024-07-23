@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://b0d7nvx4yjxy2"]
+[gd_scene load_steps=5 format=3 uid="uid://b0d7nvx4yjxy2"]
 
 [ext_resource type="Script" path="res://Scripts/game.gd" id="1_8l15m"]
 [ext_resource type="Script" path="res://Scripts/camera_input.gd" id="3_x3dxi"]
+[ext_resource type="PackedScene" uid="uid://dyeld0jqcr1i0" path="res://Scenes/ui.tscn" id="4_xp87e"]
 [ext_resource type="PackedScene" uid="uid://bteu6rr1m2jya" path="res://Scenes/map.tscn" id="5_yq1fu"]
 
 [node name="Game" type="Node2D"]
@@ -16,6 +17,8 @@ map = NodePath("../LeftMap")
 
 [node name="RightMap" parent="." instance=ExtResource("5_yq1fu")]
 position = Vector2(1227, 0)
+
+[node name="Control" parent="." instance=ExtResource("4_xp87e")]
 
 [connection signal="map_prov_clicked" from="LeftMap" to="." method="_on_left_map_map_prov_clicked"]
 [connection signal="map_prov_clicked" from="RightMap" to="." method="_on_right_map_map_prov_clicked"]

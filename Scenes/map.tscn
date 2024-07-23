@@ -2,13 +2,14 @@
 
 [ext_resource type="Texture2D" uid="uid://c7kdkrqlypb8k" path="res://Assets/maps/mouse_map.png" id="1_prxjd"]
 [ext_resource type="Script" path="res://Scripts/map.gd" id="2_wnghg"]
-[ext_resource type="Script" path="res://Scripts/MouseMap.gd" id="3_ognea"]
+[ext_resource type="Script" path="res://Scripts/mouse_map.gd" id="3_6kylv"]
 [ext_resource type="Texture2D" uid="uid://b0k6bh55hymx6" path="res://Assets/maps/debug_map.png" id="3_u7p1w"]
 [ext_resource type="Texture2D" uid="uid://b2ymyq75gbxlc" path="res://Assets/maps/wasteland_map.png" id="5_vos11"]
 [ext_resource type="Shader" path="res://Shaders/testshader.gdshader" id="6_70vmw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7jssx"]
 shader = ExtResource("6_70vmw")
+shader_parameter/num_of_provinces = null
 shader_parameter/base_color = null
 shader_parameter/colors = null
 
@@ -19,7 +20,7 @@ script = ExtResource("2_wnghg")
 visible = false
 texture = ExtResource("1_prxjd")
 centered = false
-script = ExtResource("3_ognea")
+script = ExtResource("3_6kylv")
 
 [node name="DebugMap" type="Sprite2D" parent="."]
 visible = false

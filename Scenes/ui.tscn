@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://dyeld0jqcr1i0"]
+
+[ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
+[ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
+[ext_resource type="FontFile" uid="uid://bl0pqv7txxuht" path="res://Assets/ui/TEST_FONT_4.ttf" id="3_ohvcs"]
+
+[node name="Control" type="CanvasLayer"]
+script = ExtResource("1_kh6vk")
+
+[node name="Screen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 320.0
+offset_bottom = 180.0
+scale = Vector2(3.6, 3.6)
+
+[node name="LowerBanner" type="Control" parent="Screen"]
+layout_mode = 2
+anchors_preset = 0
+offset_top = 164.0
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.18
+
+[node name="Sprite" type="TextureRect" parent="Screen/LowerBanner"]
+layout_mode = 0
+offset_right = 320.0
+offset_bottom = 16.0
+texture = ExtResource("2_nodni")
+
+[node name="Label" type="Label" parent="Screen/LowerBanner"]
+layout_mode = 2
+offset_left = 38.0556
+offset_top = 3.77778
+offset_right = 112.056
+offset_bottom = 13.7778
+theme_override_fonts/font = ExtResource("3_ohvcs")
+theme_override_font_sizes/font_size = 10
+text = "Selected Province: y"

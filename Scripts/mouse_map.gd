@@ -28,8 +28,7 @@ func handleMouse():
 		GameData.prov_clicked(-1)
 		return
 	
-	print("id: " + str(id))
-	print(str(provinces[id]._name) + "\n")
+	print("{ id: " + str(id) + ", " + str(provinces[id]._name) + " }\n")
 	
 	GameData.prov_clicked(id)
 

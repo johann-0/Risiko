@@ -35,3 +35,5 @@ centered = false
 material = SubResource("ShaderMaterial_7jssx")
 texture = ExtResource("1_prxjd")
 centered = false
+
+[node name="SoldierObjs" type="Node2D" parent="."]

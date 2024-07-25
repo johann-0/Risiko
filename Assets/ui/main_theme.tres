@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bnehbdwc2p6ne"]
+
+[ext_resource type="FontFile" uid="uid://bl0pqv7txxuht" path="res://Assets/ui/TEST_FONT_4.ttf" id="1_5pu4q"]
+
+[resource]
+Label/font_sizes/font_size = 10
+Label/fonts/font = ExtResource("1_5pu4q")

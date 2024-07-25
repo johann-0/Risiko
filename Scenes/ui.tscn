@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://dyeld0jqcr1i0"]
+[gd_scene load_steps=7 format=3 uid="uid://dyeld0jqcr1i0"]
 
 [ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
 [ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
-[ext_resource type="FontFile" uid="uid://bl0pqv7txxuht" path="res://Assets/ui/TEST_FONT_4.ttf" id="3_ohvcs"]
+[ext_resource type="PackedScene" uid="uid://cfx0vrgsv86w5" path="res://Scenes/stat.tscn" id="3_36gpu"]
+[ext_resource type="Texture2D" uid="uid://baa3pox2i0av3" path="res://Assets/ui/soldier_icon.png" id="5_mi587"]
+[ext_resource type="Texture2D" uid="uid://bt6d1qg77dhin" path="res://Assets/ui/top_tab.png" id="5_p3up7"]
+[ext_resource type="Texture2D" uid="uid://cvygsk8hd8rdn" path="res://Assets/ui/turn_icon.png" id="6_ocdlk"]
 
 [node name="Control" type="CanvasLayer"]
 script = ExtResource("1_kh6vk")
@@ -10,31 +13,66 @@ script = ExtResource("1_kh6vk")
 [node name="Screen" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 320.0
-offset_bottom = 180.0
-scale = Vector2(3.6, 3.6)
+offset_right = 288.0
+offset_bottom = 162.0
+scale = Vector2(4, 4)
 
 [node name="LowerBanner" type="Control" parent="Screen"]
 layout_mode = 2
 anchors_preset = 0
-offset_top = 164.0
-offset_right = 320.0
-offset_bottom = 180.0
+offset_top = 146.0
+offset_right = 288.0
+offset_bottom = 162.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.18
 
-[node name="Sprite" type="TextureRect" parent="Screen/LowerBanner"]
+[node name="Banner" type="TextureRect" parent="Screen/LowerBanner"]
 layout_mode = 0
-offset_right = 320.0
+offset_right = 288.0
 offset_bottom = 16.0
 texture = ExtResource("2_nodni")
 
-[node name="Label" type="Label" parent="Screen/LowerBanner"]
-layout_mode = 2
-offset_left = 38.0556
-offset_top = 3.77778
-offset_right = 112.056
-offset_bottom = 13.7778
-theme_override_fonts/font = ExtResource("3_ohvcs")
-theme_override_font_sizes/font_size = 10
-text = "Selected Province: y"
+[node name="NameStat" parent="Screen/LowerBanner" instance=ExtResource("3_36gpu")]
+layout_mode = 1
+offset_left = 37.0
+offset_top = 3.0
+offset_right = 37.0
+offset_bottom = 3.0
+
+[node name="SoldiersStat" parent="Screen/LowerBanner" instance=ExtResource("3_36gpu")]
+layout_mode = 1
+offset_left = 135.0
+offset_top = 3.0
+offset_right = 135.0
+offset_bottom = 3.0
+
+[node name="Icon" parent="Screen/LowerBanner/SoldiersStat" index="0"]
+texture = ExtResource("5_mi587")
+
+[node name="UpperBanner" type="Control" parent="Screen"]
+anchors_preset = 0
+offset_right = 288.0
+offset_bottom = 13.0
+
+[node name="Banner" type="TextureRect" parent="Screen/UpperBanner"]
+layout_mode = 0
+offset_right = 288.0
+offset_bottom = 14.0
+texture = ExtResource("5_p3up7")
+
+[node name="TurnStat" parent="Screen/UpperBanner" instance=ExtResource("3_36gpu")]
+layout_mode = 1
+offset_left = 76.0
+offset_top = 2.0
+offset_right = 76.0
+offset_bottom = 2.0
+
+[node name="Icon" parent="Screen/UpperBanner/TurnStat" index="0"]
+texture = ExtResource("6_ocdlk")
+
+[node name="Value" parent="Screen/UpperBanner/TurnStat" index="1"]
+text = ": Attack"
+
+[editable path="Screen/LowerBanner/NameStat"]
+[editable path="Screen/LowerBanner/SoldiersStat"]
+[editable path="Screen/UpperBanner/TurnStat"]

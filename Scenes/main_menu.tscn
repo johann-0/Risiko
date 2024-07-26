@@ -1,0 +1,115 @@
+[gd_scene load_steps=5 format=3 uid="uid://ddwvrhec0a60o"]
+
+[ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_5smud"]
+[ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="2_8jt8f"]
+[ext_resource type="Script" path="res://Scripts/Start.gd" id="2_nxv4w"]
+[ext_resource type="Script" path="res://Scripts/Lobby.gd" id="3_dmqd2"]
+
+[node name="MainMenu" type="Node2D"]
+script = ExtResource("1_5smud")
+
+[node name="Start" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_nxv4w")
+
+[node name="join" type="Button" parent="Start"]
+layout_mode = 0
+offset_left = 513.0
+offset_top = 250.0
+offset_right = 557.0
+offset_bottom = 281.0
+scale = Vector2(2, 2)
+theme = ExtResource("2_8jt8f")
+text = "Join"
+
+[node name="host" type="Button" parent="Start"]
+layout_mode = 0
+offset_left = 329.0
+offset_top = 249.0
+offset_right = 373.0
+offset_bottom = 280.0
+scale = Vector2(2, 2)
+theme = ExtResource("2_8jt8f")
+text = "Host"
+
+[node name="playerName" type="LineEdit" parent="Start"]
+layout_mode = 0
+offset_left = 393.0
+offset_top = 24.0
+offset_right = 559.453
+offset_bottom = 69.005
+scale = Vector2(2, 2)
+text = "Jose"
+
+[node name="serverName" type="LineEdit" parent="Start"]
+layout_mode = 0
+offset_left = 398.0
+offset_top = 136.0
+offset_right = 564.453
+offset_bottom = 181.005
+scale = Vector2(2, 2)
+text = "BestServer"
+
+[node name="enterPlayerName" type="Label" parent="Start"]
+layout_mode = 0
+offset_left = 222.0
+offset_top = 60.0
+offset_right = 373.0
+offset_bottom = 83.0
+text = "Enter player name: "
+
+[node name="enterServerName" type="Label" parent="Start"]
+layout_mode = 0
+offset_left = 216.0
+offset_top = 166.0
+offset_right = 363.0
+offset_bottom = 189.0
+text = "Enter server name:"
+
+[node name="Lobby" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_dmqd2")
+ADDRESS = null
+PORT = null
+
+[node name="back" type="Button" parent="Lobby"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 16.0
+offset_right = 78.0
+offset_bottom = 47.0
+scale = Vector2(2, 2)
+theme = ExtResource("2_8jt8f")
+text = "Back"
+
+[node name="playerName" type="Label" parent="Lobby"]
+layout_mode = 0
+offset_left = 312.0
+offset_top = 126.0
+offset_right = 352.0
+offset_bottom = 149.0
+
+[node name="serverName" type="Label" parent="Lobby"]
+layout_mode = 0
+offset_left = 313.0
+offset_top = 26.0
+offset_right = 353.0
+offset_bottom = 49.0
+
+[node name="start" type="Button" parent="Lobby"]
+layout_mode = 0
+offset_left = 1019.0
+offset_top = 36.0
+offset_right = 1065.0
+offset_bottom = 67.0
+scale = Vector2(2, 2)
+theme = ExtResource("2_8jt8f")
+text = "Start
+"

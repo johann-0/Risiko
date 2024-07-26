@@ -3,13 +3,12 @@ extends Node2D
 signal _prov_clicked(provID: int)
 const SEL_COLOR: Color = Color8(0, 255, 0, 255)
 const NEIGH_COLOR: Color = Color8(0, 255, 0, 70)
-const WASTELAND_ID: int = -1
 
 var NUM_PROV: int = 0
 var provinces: Array = []
-var players: Array
+var players: Array = []
 
-var selectedProvID: int = WASTELAND_ID
+var selectedProvID: int = Province.WASTELAND_ID
 var turnPlayerID: int = -1
 var gamePhase: Phase = Phase.DEPLOY
 var localPlayerID: int = 0
@@ -18,7 +17,12 @@ enum Phase { DEPLOY, ATTACK, FORTIFY}
 
 class Player:
 	var _id: int
+	var _name: String
 	var _color: Color
+	func _init(id: int, name: String, color: Color = Color.AZURE):
+		_id = id
+		_name = name
+		_color = color
 
 class Province:
 	var _id: int
@@ -26,19 +30,20 @@ class Province:
 	var _neighbors: Array
 	var _soldiers: int
 	var _center: Vector2
-	
-	static func wasteland():
-		var wasteland = Province.new()
-		wasteland._id = WASTELAND_ID
-		wasteland._name = "Wasteland"
-		wasteland._neighbors = []
+	static var WASTELAND_ID: int = -1
+	func _init(id: int, name: String, neighbors: Array, soldiers: int, center: Vector2):
+		_id = id
+		_name = name
+		_neighbors = neighbors
+		_soldiers = soldiers
+		_center = center 
+	static func WASTELAND():
+		var wasteland = Province.new(WASTELAND_ID, "Wasteland", [], 0, Vector2(0,0))
 		return wasteland
 
 
 func _ready():
-	var newPlayer = Player.new()
-	newPlayer._color = Color.BLUE
-	newPlayer._id = 0
+	var newPlayer = Player.new(0, "Placeholder Guy", Color.BLUE)
 	players.append(newPlayer)
 	add_provinces_to_arr()
 	provinces[0]._soldiers = 69
@@ -55,13 +60,9 @@ func add_provinces_to_arr():
 	
 	NUM_PROV = json.data.num_of_provinces
 	for provinceID in json.data.provinces:
-		var newProv = Province.new()
-		newProv._id = int(provinceID)
-		var extractedProv = json.data.provinces[provinceID]
-		newProv._name = extractedProv["name"]
-		newProv._neighbors = extractedProv["neighbors"]
-		var centerArr = extractedProv["center"]
-		newProv._center = Vector2(centerArr[0], centerArr[1])
+		var extrProv = json.data.provinces[provinceID]
+		var centerArr = extrProv["center"]
+		var newProv = Province.new(int(provinceID), extrProv["name"], extrProv["neighbors"], 0, Vector2(centerArr[0], centerArr[1]))
 		provinces.append(newProv)
 		#print(newProv._name)
 		#print(newProv._id)
@@ -81,8 +82,8 @@ func prov_clicked(provID: int):
 
 
 func get_selected_prov():
-	if selectedProvID == WASTELAND_ID:
-		return Province.wasteland()
+	if selectedProvID == Province.WASTELAND_ID:
+		return Province.WASTELAND()
 	return provinces[selectedProvID]
 
 

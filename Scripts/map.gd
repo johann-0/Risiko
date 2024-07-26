@@ -66,7 +66,7 @@ func _on_prov_clicked(newProvID: int):
 	if(oldProvID == newProvID):
 		return
 	# Color out previous province(s)
-	if oldProvID != GameData.WASTELAND_ID:
+	if oldProvID != GameData.Province.WASTELAND_ID:
 		var curProv = GameData.provinces[oldProvID]
 		var provIDs: Array = [oldProvID]
 		var colors: Array
@@ -77,7 +77,7 @@ func _on_prov_clicked(newProvID: int):
 	
 	# Color in new province(s)
 	GameData.set_selected_prov(newProvID)
-	if newProvID != GameData.WASTELAND_ID:
+	if newProvID != GameData.Province.WASTELAND_ID:
 		var curProv = GameData.provinces[newProvID]
 		var provIDs: Array = [newProvID]
 		var colors: Array

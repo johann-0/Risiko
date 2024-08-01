@@ -11,7 +11,8 @@ var players: Array = []
 var selectedProvID: int = Province.WASTELAND_ID
 var turnPlayerID: int = -1
 var gamePhase: Phase = Phase.DEPLOY
-var localPlayerID: int = 0
+var localPlayerIndex: int = 0
+var serverName: String = ""
 
 enum Phase { DEPLOY, ATTACK, FORTIFY}
 
@@ -23,6 +24,11 @@ class Player:
 		_id = id
 		_name = name
 		_color = color
+	static func PLACEHOLDER():
+		var placeholder = Player.new(0, "Placeholder Local Man")
+		return placeholder
+	func equals(otherPlayer: Player):
+		return _id == otherPlayer._id
 
 class Province:
 	var _id: int
@@ -43,9 +49,9 @@ class Province:
 
 
 func _ready():
-	var newPlayer = Player.new(0, "Placeholder Guy", Color.BLUE)
-	players.append(newPlayer)
+	players.append(Player.PLACEHOLDER())
 	add_provinces_to_arr()
+	
 	provinces[0]._soldiers = 69
 
 

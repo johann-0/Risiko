@@ -9,6 +9,7 @@
 script = ExtResource("1_5smud")
 
 [node name="Start" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -70,14 +71,11 @@ offset_bottom = 189.0
 text = "Enter server name:"
 
 [node name="Lobby" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("3_dmqd2")
-ADDRESS = null
-PORT = null
 
 [node name="back" type="Button" parent="Lobby"]
 layout_mode = 0

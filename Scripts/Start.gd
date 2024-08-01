@@ -6,23 +6,23 @@ func _ready():
 	$host.connect("pressed", Callable(self, "_on_host_pressed"))
 
 func startUp():
-	get_parent().playerName = ""
-	get_parent().serverName = ""
+	GameData.players[GameData.localPlayerIndex]._name = ""
+	GameData.serverName = ""
 	$playerName.text = "Jose"
 	$serverName.text = "BestServer"
 	startedUp = true
 	show()
 
 func _on_join_pressed():
-	get_parent().playerName = $playerName.text
-	get_parent().serverName = $serverName.text
+	GameData.players[GameData.localPlayerIndex]._name = $playerName.text
+	GameData.serverName = $serverName.text
 	startedUp = false
 	hide()
 	get_parent().get_child(1).startUp(false)
 
 func _on_host_pressed():
-	get_parent().playerName = $playerName.text
-	get_parent().serverName = $serverName.text
+	GameData.players[GameData.localPlayerIndex]._name = $playerName.text
+	GameData.serverName = $serverName.text
 	startedUp = false
 	hide()
 	get_parent().get_child(1).startUp(true)

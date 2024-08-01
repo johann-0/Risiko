@@ -1,22 +1,32 @@
 extends Control
 
-@export var ADDRESS: String = "172.29.160.1"
+@export var ADDRESS: String = "2a02:908:1060:6aa3:8de2:56d2:e69c:d2b9"
 @export var PORT: int = 8910
 var peer: ENetMultiplayerPeer
 var startedUp: bool = false
+var upnp: UPNP
 
 func _ready():
 	multiplayer.peer_connected.connect(peer_connected)
 	multiplayer.peer_disconnected.connect(peer_disconnected)
 	multiplayer.connected_to_server.connect(connected_to_server)
 	multiplayer.connection_failed.connect(connection_failed)
+	multiplayer.server_disconnected.connect(server_disconnected)
 	$start.connect("pressed", Callable(self, "_on_start_button_pressed"))
 	$back.connect("pressed", Callable(self, "_on_back_button_pressed"))
 
 func startUp(isHosting: bool):
+	upnp = UPNP.new()
+	var error = upnp.add_port_mapping(PORT)
+	
+	if error != UPNP.UPNP_RESULT_SUCCESS:
+		print("Error! Failed to do port mapping!: " + str(error))
+		return
+	
+	
 	peer = ENetMultiplayerPeer.new()
 	if isHosting:
-		var error = peer.create_server(PORT, 4)
+		error = peer.create_server(PORT, 4)
 		if error != OK:
 			printID("Error! Failed to create server: " + error)
 			return
@@ -31,7 +41,7 @@ func startUp(isHosting: bool):
 		GameData.players.clear()
 		GameData.players.append(GameData.Player.new(multiplayer.get_unique_id(), playerName, Color.BLUE))
 	else:
-		var error = peer.create_client(ADDRESS, PORT)
+		error = peer.create_client(ADDRESS, PORT)
 		if error != OK:
 			printID("Error! Failed to create client: " + error)
 			return
@@ -63,7 +73,10 @@ func connected_to_server():
 	GameData.players.clear()
 # Called only from clients
 func connection_failed():
-	printID("Error: Failed to connect (to server)!")
+	printID("Failed to connect (to server)!")
+# IDK who calls this
+func server_disconnected():
+	printID("Server disconnected!")
 
 func sendPlayerInfoToServer():
 	SendPlayerInformation.rpc_id(1, GameData.players[GameData.localPlayerIndex]._name, multiplayer.get_unique_id(), -1)
@@ -116,6 +129,8 @@ func _on_back_button_pressed():
 	GameData.players.clear()
 	GameData.players.append(GameData.Player.PLACEHOLDER())
 	GameData.localPlayerIndex = 0
+	#To close a specific port (e.g. after you have finished using it):
+	upnp.delete_port_mapping(PORT)
 	hide()
 	get_parent().get_child(0).startUp()
 

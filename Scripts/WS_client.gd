@@ -3,6 +3,7 @@ signal connected
 signal connecting
 signal recieved_data(data: String)
 signal disconnected
+signal disconnecting
 var _socket: WebSocketPeer
 var _state: WebSocketPeer.State
 

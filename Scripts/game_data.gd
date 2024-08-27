@@ -13,6 +13,9 @@ var turnPlayerID: int = -1
 var gamePhase: Phase = Phase.DEPLOY
 var localPlayerIndex: int = 0
 
+const Client = preload("res://Scripts/WS_client.gd")
+var client: Client
+
 class ServerName:
 	var _address: String
 	var _port: int
@@ -37,7 +40,7 @@ class Player:
 		_name = name
 		_color = color
 	static func DEFAULT_PLAYER():
-		return Player.new(0, "DEFAULT PLAYER")
+		return Player.new(0, "DEFAULT PLAYER" + str(randi()%64))
 	func equals(otherPlayer: Player):
 		return _id == otherPlayer._id
 	func _to_string():
@@ -115,8 +118,12 @@ func get_selected_prov():
 func set_selected_prov(newID : int):
 	selectedProvID = newID
 
-func players_to_string():
-	var string = []
+
+func players_to_JSON():
+	var toReturn = []
 	for player in players:
-		string.append(player._to_JSON())
-	return JSON.stringify(players_to_string())
+		toReturn.append(player._to_JSON())
+	return toReturn
+
+func players_to_string():
+	return JSON.stringify(players_to_JSON())

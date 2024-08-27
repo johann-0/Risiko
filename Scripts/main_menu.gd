@@ -1,7 +1,25 @@
-extends Node2D
+extends Control
 
 func _ready():
-	$Start.show()
-	$Lobby.hide()
-	$Start.startUp()
+	$Join.connect("pressed", Callable(self, "_on_join_pressed"))
+	$Host.connect("pressed", Callable(self, "_on_host_pressed"))
+	
+	var defPlayer = GameData.Player.DEFAULT_PLAYER()
+	var defServerName = GameData.ServerName.DEFAULT_SERVER_NAME()
+	
+	GameData.players[GameData.localPlayerIndex]._name = defPlayer._name
+	GameData.serverName = defServerName
+	$PlayerName.text = defPlayer._name
+	$ServerAddress.text = defServerName._address
+	$ServerPort.text = str(defServerName._port)
 
+func _on_join_pressed():
+	GameData.players[GameData.localPlayerIndex]._name = $PlayerName.text
+	GameData.serverName = GameData.ServerName.new($ServerAddress.text, int($ServerPort.text))
+	get_tree().change_scene_to_file("res://Scenes/lobby.tscn")
+
+func _on_host_pressed():
+	GameData.players[GameData.localPlayerIndex]._name = $PlayerName.text
+	GameData.serverName = GameData.ServerName.new($ServerAddress.text, int($ServerPort.text))
+	$Host.hide()
+	#get_tree().change_scene_to_file("res://Scenes/lobby.tscn")

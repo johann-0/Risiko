@@ -12,7 +12,19 @@ var selectedProvID: int = Province.WASTELAND_ID
 var turnPlayerID: int = -1
 var gamePhase: Phase = Phase.DEPLOY
 var localPlayerIndex: int = 0
-var serverName: String = ""
+
+class ServerName:
+	var _address: String
+	var _port: int
+	func _init(address: String, port: int):
+		_address = address
+		_port = port
+	func getName():
+		return _address + ":" + str(_port)
+	static func DEFAULT_SERVER_NAME():
+		return ServerName.new("127.0.0.1", 8080)
+
+var serverName: ServerName = ServerName.DEFAULT_SERVER_NAME()
 
 enum Phase { DEPLOY, ATTACK, FORTIFY}
 
@@ -24,11 +36,18 @@ class Player:
 		_id = id
 		_name = name
 		_color = color
-	static func PLACEHOLDER():
-		var placeholder = Player.new(0, "Placeholder Local Man")
-		return placeholder
+	static func DEFAULT_PLAYER():
+		return Player.new(0, "DEFAULT PLAYER")
 	func equals(otherPlayer: Player):
 		return _id == otherPlayer._id
+	func _to_string():
+		return JSON.stringify(_to_JSON())
+	func _to_JSON():
+		return {
+			"id": _id,
+			"name": _name,
+			"color": _color.to_html()
+			}
 
 class Province:
 	var _id: int
@@ -49,7 +68,7 @@ class Province:
 
 
 func _ready():
-	players.append(Player.PLACEHOLDER())
+	players.append(Player.DEFAULT_PLAYER())
 	add_provinces_to_arr()
 	
 	provinces[0]._soldiers = 69
@@ -95,3 +114,9 @@ func get_selected_prov():
 
 func set_selected_prov(newID : int):
 	selectedProvID = newID
+
+func players_to_string():
+	var string = []
+	for player in players:
+		string.append(player._to_JSON())
+	return JSON.stringify(players_to_string())

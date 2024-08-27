@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://dddb3xveecq3o"]
+
+[ext_resource type="Script" path="res://Scripts/lobby.gd" id="1_cet53"]
+[ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="2_m6crb"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_cet53")
+
+[node name="Back" type="Button" parent="."]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 16.0
+offset_right = 78.0
+offset_bottom = 47.0
+scale = Vector2(2, 2)
+theme = ExtResource("2_m6crb")
+text = "Back"
+
+[node name="PlayerName" type="Label" parent="."]
+layout_mode = 0
+offset_left = 312.0
+offset_top = 126.0
+offset_right = 352.0
+offset_bottom = 149.0
+
+[node name="ServerName" type="Label" parent="."]
+layout_mode = 0
+offset_left = 313.0
+offset_top = 26.0
+offset_right = 353.0
+offset_bottom = 49.0
+
+[node name="Start" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1019.0
+offset_top = 36.0
+offset_right = 1065.0
+offset_bottom = 67.0
+scale = Vector2(2, 2)
+theme = ExtResource("2_m6crb")
+text = "Start
+"
+
+[node name="Players" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="SendMessage" type="Button" parent="."]
+layout_mode = 0
+offset_left = 366.0
+offset_top = 369.0
+offset_right = 480.0
+offset_bottom = 400.0
+text = "SendMessage"

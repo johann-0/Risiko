@@ -61,9 +61,18 @@ wss.on('connection', function connection(ws) {
         
         log.apply(console, ["[" + ws.id + "] " + first_parameter].concat(other_parameters));
     }; }
-  
   ws.id = generatePlayerID();
+  print(wss.clients.size)
   print("Connection started\n");
+  
+  
+  // Kick the client out
+  if (wss.clients.size > 4) {
+    print("Too many clients (" + wss.clients.length + "). Trying to close this socket!")
+    ws.close();
+  }
+  
+  
   
   ws.on('message', (message) => {
     // Print out the message to log
@@ -84,10 +93,32 @@ wss.on('connection', function connection(ws) {
         players.push(new PlayerBaseInfo(ws.id, data["name"], data["color"]));
         toLog += "player_info, saved object: " + players[players.length-1];
         // Send lobby_data to everyone (other players' data)
-        sendPlayersData()
+        sendPlayersData();
         break;
       // Received when a player wants to start the game
       case "start_game":
+        // Resolve the random colors
+        // Get available colors
+        let avail_colors = [0x0000FFFF, 0xFF0000FF, 0x00FF00FF, 0xFFFF00FF] // brgy
+        players.forEach((player)=>{
+          for (let i = 0; i < avail_colors.length; ++i) {
+            if (avail_colors[i] == player.color) {
+              avail_colors.splice(i,1);
+              break;
+            }
+          }
+        });
+        toLog += "Available colors: " + avail_colors
+        // Give out the available colors
+        players.forEach((player)=>{
+          if(player.color == 4043309055) {// 4043309055 is azure
+            let i = Math.abs(parseInt(Math.random() * 1000)) % avail_colors.length;
+            player.color = avail_colors[i];
+            avail_colors.splice(i, 1);
+          }
+        });
+        sendPlayersData();
+        
         // Send start_game message to everyone, tell them who starts
         wss.clients.forEach((_ws)=>{
           _ws.send(JSON.stringify({
@@ -96,8 +127,14 @@ wss.on('connection', function connection(ws) {
           }));
         })
         break;
-      case "color_pick":
-        
+      case "color_selected":
+        // Update the color selection of the player and then send the new lobby data to everyone
+        players.forEach((player)=>{
+          if (player.id == ws.id) {
+            player.color = message_json["data"];
+          }
+        });
+        sendPlayersData();
         break;
       default:
         toLog += "unknown(" + msg_type + ")";

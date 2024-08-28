@@ -48,7 +48,7 @@ func _input(event):
 		position -= event.relative / zoom
 	capPosition()
 
-func handle_zooming(delta):
+func handle_zooming(_delta):
 	# Position of the mouse relative to the camera before zooming
 	var dist_before = global_position - get_global_mouse_position()
 	var zoomed = false

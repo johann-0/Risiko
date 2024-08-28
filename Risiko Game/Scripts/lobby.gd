@@ -2,18 +2,24 @@ extends Control
 
 const RECONNECT_TIMEOUT: float = 3.0
 
-var _startedUp: bool = false
-
-const Client = preload("res://Scripts/WS_client.gd")
-var _client: Client = Client.new()
-const LobbyPlayer = preload("res://Scenes/player_ui.tscn")
+var _client: GameData.Client = GameData.Client.new()
 
 func _ready():
+	# General UI stuff
 	$Back.pressed.connect(_on_back_button_pressed)
 	$Start.pressed.connect(_on_start_button_pressed)
 	var player: GameData.Player = GameData.players[GameData.localPlayerIndex]
 	$GameInfo/PlayerName.text += player._name
 	$GameInfo/ServerName.text += GameData.serverName.getName()
+	# UI stuff: color picking
+	var blueBut = Color_Button.new_color_button(Vector2i(0,0), Color.BLUE)
+	$ColorSelection.add_child(blueBut)
+	var redBut = Color_Button.new_color_button(Vector2i(0,28), Color.RED)
+	$ColorSelection.add_child(redBut)
+	var greenBut = Color_Button.new_color_button(Vector2i(0,56), Color.GREEN)
+	$ColorSelection.add_child(greenBut)
+	var yellowBut = Color_Button.new_color_button(Vector2i(0,84), Color.YELLOW)
+	$ColorSelection.add_child(yellowBut)
 	
 	_client.connected.connect(client_connected)
 	_client.disconnected.connect(client_disconnected)
@@ -80,7 +86,7 @@ func client_rec_data(data: String):
 			var index: int = 0
 			for player in GameData.players:
 				var player_obj = Player_UI.new_player_UI(\
-					Vector2(0,0+ 40 + 50 * index), \
+					Vector2i(0,0+ 40 + 60 * index), \
 					player._id, player._name, player._color)
 				$GameInfo/Players.add_child(player_obj)
 				# Highlight the local player's stats
@@ -89,6 +95,7 @@ func client_rec_data(data: String):
 				index += 1
 		"start_game":
 			GameData.client = _client
+			GameData.turnPlayerIndex = json_obj["turn"]
 			get_tree().change_scene_to_file("res://Scenes/game.tscn")
 			pass
 		_:
@@ -110,4 +117,8 @@ func _on_back_button_pressed():
 		await _client.disconnected
 	
 	get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
+
+
+func blue_but_pressed():
+	print("\n\nBLUE BUTTON PRESSED\n\n")
 

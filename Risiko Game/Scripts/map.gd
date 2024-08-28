@@ -42,7 +42,7 @@ func _ready():
 		$SoldierObjs.add_child(newSold)
 
 
-func _process(delta):
+func _process(_delta):
 	var colors: Array = mat.get_shader_parameter("colors")
 	for neighbors in GameData.get_selected_prov()._neighbors:
 		pass
@@ -69,7 +69,7 @@ func _on_prov_clicked(newProvID: int):
 	if oldProvID != GameData.Province.WASTELAND_ID:
 		var curProv = GameData.provinces[oldProvID]
 		var provIDs: Array = [oldProvID]
-		var colors: Array
+		var colors: Array = []
 		provIDs.append_array(curProv._neighbors)
 		colors.resize(len(provIDs))
 		colors.fill(Color.TRANSPARENT)
@@ -80,7 +80,7 @@ func _on_prov_clicked(newProvID: int):
 	if newProvID != GameData.Province.WASTELAND_ID:
 		var curProv = GameData.provinces[newProvID]
 		var provIDs: Array = [newProvID]
-		var colors: Array
+		var colors: Array = []
 		provIDs.append_array(curProv._neighbors)
 		colors.resize(len(provIDs))
 		colors.fill(GameData.NEIGH_COLOR)

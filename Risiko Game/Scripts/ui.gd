@@ -6,7 +6,7 @@ func _ready():
 	GameData.connect("_prov_clicked", Callable(self, "_on_prov_clicked"))
 
 
-func _process(delta):
+func _process(_delta):
 	setText()
 
 

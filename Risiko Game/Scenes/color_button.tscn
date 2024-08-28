@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://cnv1d35xhqfly"]
+
+[ext_resource type="Script" path="res://Scripts/color_button.gd" id="1_t71sj"]
+
+[sub_resource type="Gradient" id="Gradient_ylhk5"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_rf4jl"]
+gradient = SubResource("Gradient_ylhk5")
+width = 24
+height = 24
+
+[node name="ColorButton" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t71sj")
+
+[node name="Button" type="TextureButton" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+texture_normal = SubResource("GradientTexture2D_rf4jl")
+
+[node name="Cover" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0, 0, 0, 0.588235)
+
+[connection signal="pressed" from="Button" to="." method="_on_pressed"]

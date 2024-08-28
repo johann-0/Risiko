@@ -8,8 +8,9 @@ var NUM_PROV: int = 0
 var provinces: Array = []
 var players: Array = []
 
+var gameSelectedProvID: int = Province.WASTELAND_ID
 var selectedProvID: int = Province.WASTELAND_ID
-var turnPlayerID: int = -1
+var turnPlayerIndex: int = -1
 var gamePhase: Phase = Phase.DEPLOY
 var localPlayerIndex: int = 0
 

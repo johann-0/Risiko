@@ -4,10 +4,10 @@ extends Control
 func _ready():
 	pass
 
-func _process(delta):
+func _process(_delta):
 	pass
 
-static func new_player_UI(position: Vector2, id: int, name: String, color: Color) -> Player_UI:
+static func new_player_UI(position: Vector2i, id: int, name: String, color: Color) -> Player_UI:
 	var my_scene: PackedScene = load("res://Scenes/player_ui.tscn")
 	var toReturn: Player_UI = my_scene.instantiate()
 	var text = ""

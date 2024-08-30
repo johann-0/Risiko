@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dyeld0jqcr1i0"]
+[gd_scene load_steps=8 format=3 uid="uid://dyeld0jqcr1i0"]
 
 [ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
 [ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
@@ -6,8 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://baa3pox2i0av3" path="res://Assets/ui/soldier_icon.png" id="5_mi587"]
 [ext_resource type="Texture2D" uid="uid://bt6d1qg77dhin" path="res://Assets/ui/top_tab.png" id="5_p3up7"]
 [ext_resource type="Texture2D" uid="uid://cvygsk8hd8rdn" path="res://Assets/ui/turn_icon.png" id="6_ocdlk"]
+[ext_resource type="Texture2D" uid="uid://bkg7g7dr52yaf" path="res://Assets/ui/avail_troops.png" id="7_y08sn"]
 
-[node name="Control" type="CanvasLayer"]
+[node name="UI" type="CanvasLayer"]
 script = ExtResource("1_kh6vk")
 
 [node name="Screen" type="Control" parent="."]
@@ -64,15 +65,28 @@ texture = ExtResource("5_p3up7")
 layout_mode = 1
 offset_left = 76.0
 offset_top = 2.0
-offset_right = 76.0
-offset_bottom = 2.0
+offset_right = -170.0
 
 [node name="Icon" parent="Screen/UpperBanner/TurnStat" index="0"]
 texture = ExtResource("6_ocdlk")
 
 [node name="Value" parent="Screen/UpperBanner/TurnStat" index="1"]
-text = ": Attack"
+text = ": Deploy"
+
+[node name="AvailTroops" parent="Screen/UpperBanner" instance=ExtResource("3_36gpu")]
+layout_mode = 1
+offset_left = 128.0
+offset_top = 1.75
+offset_right = 128.0
+offset_bottom = 1.75
+
+[node name="Icon" parent="Screen/UpperBanner/AvailTroops" index="0"]
+texture = ExtResource("7_y08sn")
+
+[node name="Value" parent="Screen/UpperBanner/AvailTroops" index="1"]
+text = ": 10"
 
 [editable path="Screen/LowerBanner/NameStat"]
 [editable path="Screen/LowerBanner/SoldiersStat"]
 [editable path="Screen/UpperBanner/TurnStat"]
+[editable path="Screen/UpperBanner/AvailTroops"]

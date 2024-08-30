@@ -36,10 +36,12 @@ class Player:
 	var _id: int
 	var _name: String
 	var _color: Color
-	func _init(id: int, name: String, color: Color = Color.AZURE):
+	var _soldiers: int
+	func _init(id: int, name: String, color: Color = Color.AZURE, soldiers: int = 0):
 		_id = id
 		_name = name
 		_color = color
+		_soldiers = soldiers
 	static func DEFAULT_PLAYER():
 		return Player.new(0, "DEFAULT PLAYER" + str(randi()%64))
 	func equals(otherPlayer: Player):
@@ -50,7 +52,8 @@ class Player:
 		return {
 			"id": _id,
 			"name": _name,
-			"color": _color.to_html()
+			"color": _color.to_html(),
+			"soldiers": _soldiers
 			}
 
 class Province:

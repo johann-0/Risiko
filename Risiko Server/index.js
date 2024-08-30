@@ -23,7 +23,8 @@ let gameState = {
   "province stats": []
 }
 
-let players = []
+let players = [];
+const numProvinces = 42;
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -108,7 +109,7 @@ wss.on('connection', function connection(ws) {
             }
           }
         });
-        toLog += "Available colors: " + avail_colors
+        //toLog += "Available colors: " + avail_colors
         // Give out the available colors
         players.forEach((player)=>{
           if(player.color == 4043309055) {// 4043309055 is azure
@@ -119,14 +120,25 @@ wss.on('connection', function connection(ws) {
         });
         sendPlayersData();
         
+        let soldiers = [];
+        let remainingSoldiers = numProvinces % players.length;
+        for (let i = 0; i < players.length; i++) {
+          let toAdd = parseInt(numProvinces/players.length);
+          if(remainingSoldiers > 0)
+            toAdd += 1;
+          soldiers.push(toAdd);      
+        }
+        toLog += "Soldiers: " + soldiers
         // Send start_game message to everyone, tell them who starts
         wss.clients.forEach((_ws)=>{
           _ws.send(JSON.stringify({
             "message_type": "start_game",
-            "turn": 0
+            "turn": 0, // The index of the player whose turn it is
+            "soldiers": soldiers
           }));
         })
         break;
+      // When a player selects a new color
       case "color_selected":
         // Update the color selection of the player and then send the new lobby data to everyone
         players.forEach((player)=>{
@@ -136,6 +148,7 @@ wss.on('connection', function connection(ws) {
         });
         sendPlayersData();
         break;
+      // DEFAULT
       default:
         toLog += "unknown(" + msg_type + ")";
     }

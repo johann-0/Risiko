@@ -129,8 +129,12 @@ func client_rec_data(data: String):
 		"start_game":
 			GameData.client = _client
 			GameData.turnPlayerIndex = json_obj["turn"]
+			var index: int = 0
+			for player in GameData.players:
+				player._soldiers = json_obj["soldiers"][index]
+				++index
+			print("Starting game: %s", GameData.players_to_string())
 			get_tree().change_scene_to_file("res://Scenes/game.tscn")
-			pass
 		_:
 			print("Received unknown(%s)" % [json_obj["message_type"]])
 

@@ -4,10 +4,6 @@ extends Sprite2D
 @onready var NUM_PROV = GameData.NUM_PROV
 
 
-func _ready():
-	pass
-
-
 func _process(_delta):
 	handleMouse()
 
@@ -25,11 +21,11 @@ func handleMouse():
 	var id = color.r8 - 100
 	
 	if id < 0 or id >= NUM_PROV or color.g != 0 or color.b != 0:
-		GameData.prov_clicked(-1)
+		GameData.selectedProvID = -1
 		return
 	
-	print("{ id: " + str(id) + ", " + str(provinces[id]._name) + " }\n")
+	#print("{ id: " + str(id) + ", " + str(provinces[id]._name) + " }\n")
 	
-	GameData.prov_clicked(id)
+	GameData.selectedProvID = id
 
 

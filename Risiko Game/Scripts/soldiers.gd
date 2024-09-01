@@ -10,7 +10,7 @@ var curColorID: int = 0:
 		
 		# Adjust the sprite window
 		$Sprite.offset.y = 8 * newID;
-		$Sprite.get_rect().wi
+		#$Sprite.get_rect().wi #idk what i was gonna write here
 var facingRight: bool = true:
 	set(newFacingRight):
 		if facingRight == true && newFacingRight == false:

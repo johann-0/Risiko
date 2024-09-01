@@ -12,19 +12,26 @@ offset_right = -1052.0
 offset_bottom = -636.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(4, 4)
 script = ExtResource("1_74g0x")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 65.0
+offset_bottom = 14.0
+color = Color(0, 0, 0, 1)
 
 [node name="Text" type="Label" parent="."]
 layout_mode = 0
-offset_left = 14.0
-offset_top = 1.0
-offset_right = 34.0
-offset_bottom = 11.0
+offset_left = 15.0
+offset_top = 3.0
+offset_right = 63.0
+offset_bottom = 13.0
 theme = ExtResource("2_xu774")
-text = "00: Jeff"
+text = "00: Player_99"
 
 [node name="Color" type="ColorRect" parent="."]
 layout_mode = 0
-offset_right = 12.0
-offset_bottom = 12.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 13.0
+offset_bottom = 13.0

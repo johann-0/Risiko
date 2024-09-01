@@ -1,7 +1,7 @@
 extends Node
 signal connected
 signal connecting
-signal recieved_data(data: String)
+signal received_data(data: String)
 signal disconnected
 signal disconnecting
 var _socket: WebSocketPeer
@@ -39,7 +39,7 @@ func _process(_delta):
 		while _socket.get_available_packet_count():
 			var data: String = _socket.get_packet().get_string_from_utf8()
 			print("WS_client: Recieved: %s" % [data])
-			recieved_data.emit(data)
+			received_data.emit(data)
 
 func _connect_to_url(url: String):
 	print("WS_client: Connecting to %s..." % [url])

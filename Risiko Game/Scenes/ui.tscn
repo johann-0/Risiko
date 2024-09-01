@@ -86,6 +86,12 @@ texture = ExtResource("7_y08sn")
 [node name="Value" parent="Screen/UpperBanner/AvailTroops" index="1"]
 text = ": 10"
 
+[node name="Players" type="Control" parent="Screen"]
+anchors_preset = 0
+offset_top = 23.0
+offset_right = 54.0
+offset_bottom = 125.0
+
 [editable path="Screen/LowerBanner/NameStat"]
 [editable path="Screen/LowerBanner/SoldiersStat"]
 [editable path="Screen/UpperBanner/TurnStat"]

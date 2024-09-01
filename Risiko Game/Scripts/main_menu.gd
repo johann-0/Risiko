@@ -14,6 +14,8 @@ func _ready():
 	$ServerPort.text = str(defServerName._port)
 
 func _on_join_pressed():
+	if len($PlayerName.text) > 9:
+		return
 	GameData.players[GameData.localPlayerIndex]._name = $PlayerName.text
 	GameData.serverName = GameData.ServerName.new($ServerAddress.text, int($ServerPort.text))
 	get_tree().change_scene_to_file("res://Scenes/lobby.tscn")

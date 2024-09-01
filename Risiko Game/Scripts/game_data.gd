@@ -1,21 +1,47 @@
 extends Node2D
 
-signal _prov_clicked(provID: int)
-const SEL_COLOR: Color = Color8(0, 255, 0, 255)
-const NEIGH_COLOR: Color = Color8(0, 255, 0, 70)
+signal _prov_clicked(oldProvID: int, newProvID: int)
+signal newTurnPlayerIndex(oldIndex: int, newIndex: int)
+signal newPhase(oldPhase: Phase, newPhase: Phase)
+signal newGameSelectedProvince(oldProvID: int, newProvID: int)
+
+const SEL_COLOR: Color = Color8(0, 0, 0, 100)
+const NEIGH_COLOR: Color = Color8(0, 0, 0, 50)
+const GAME_SEL_COLOR: Color = Color8(255, 0, 0, 255)
 
 var NUM_PROV: int = 0
 var provinces: Array = []
 var players: Array = []
 
-var gameSelectedProvID: int = Province.WASTELAND_ID
-var selectedProvID: int = Province.WASTELAND_ID
-var turnPlayerIndex: int = -1
+var gameSelectedProvID: int = Province.WASTELAND_ID:
+	set(newProvID):
+		var oldProvID = gameSelectedProvID
+		gameSelectedProvID = newProvID
+		newGameSelectedProvince.emit(oldProvID, newProvID)
+var selectedProvID: int = Province.WASTELAND_ID:
+	set(newProvID):
+		var oldProvID = selectedProvID
+		selectedProvID = newProvID
+		_prov_clicked.emit(oldProvID, newProvID)
+var turnPlayerIndex: int = -1:
+	set(newIndex):
+		var oldIndex = turnPlayerIndex
+		turnPlayerIndex = newIndex
+		newTurnPlayerIndex.emit(oldIndex, newIndex)
 var gamePhase: Phase = Phase.DEPLOY
 var localPlayerIndex: int = 0
 
 const Client = preload("res://Scripts/WS_client.gd")
-var client: Client
+@onready var client: Client
+
+func client_connected():
+	pass
+func client_disconnected():
+	pass
+func client_rec_data(_data: String):
+	pass
+func client_connecting():
+	pass
 
 class ServerName:
 	var _address: String
@@ -43,18 +69,13 @@ class Player:
 		_color = color
 		_soldiers = soldiers
 	static func DEFAULT_PLAYER():
-		return Player.new(0, "DEFAULT PLAYER" + str(randi()%64))
+		return Player.new(0, "Player_" + str(randi()%64))
 	func equals(otherPlayer: Player):
 		return _id == otherPlayer._id
 	func _to_string():
 		return JSON.stringify(_to_JSON())
 	func _to_JSON():
-		return {
-			"id": _id,
-			"name": _name,
-			"color": _color.to_html(),
-			"soldiers": _soldiers
-			}
+		return { "id": _id, "name": _name, "color": _color.to_html(), "soldiers": _soldiers }
 
 class Province:
 	var _id: int
@@ -79,6 +100,13 @@ func _ready():
 	add_provinces_to_arr()
 	
 	provinces[0]._soldiers = 69
+	
+	client = Client.new()
+	client.connected.connect(client_connected)
+	client.disconnected.connect(client_disconnected)
+	client.received_data.connect(client_rec_data)
+	client.connecting.connect(client_connecting)
+	add_child(client)
 
 
 func add_provinces_to_arr():
@@ -100,7 +128,11 @@ func add_provinces_to_arr():
 		#print(newProv._id)
 	
 	# Sort the array by province id
-	provinces.sort_custom(id_sort)
+	var _id_sort = func (p1: Province, p2: Province):
+		if p1._id < p2._id:
+			return true
+		return false
+	provinces.sort_custom(_id_sort)
 
 
 func id_sort(p1: Province, p2: Province):
@@ -109,18 +141,10 @@ func id_sort(p1: Province, p2: Province):
 	return false
 
 
-func prov_clicked(provID: int):
-	emit_signal("_prov_clicked", provID)
-
-
 func get_selected_prov():
 	if selectedProvID == Province.WASTELAND_ID:
 		return Province.WASTELAND()
 	return provinces[selectedProvID]
-
-
-func set_selected_prov(newID : int):
-	selectedProvID = newID
 
 
 func players_to_JSON():
@@ -128,6 +152,7 @@ func players_to_JSON():
 	for player in players:
 		toReturn.append(player._to_JSON())
 	return toReturn
+
 
 func players_to_string():
 	return JSON.stringify(players_to_JSON())

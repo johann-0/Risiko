@@ -57,11 +57,11 @@ text = "12345"
 
 [node name="EnterPlayerName" type="Label" parent="."]
 layout_mode = 0
-offset_left = 222.0
-offset_top = 60.0
-offset_right = 373.0
-offset_bottom = 83.0
-text = "Enter player name: "
+offset_left = 104.0
+offset_top = 58.0
+offset_right = 362.0
+offset_bottom = 81.0
+text = "Enter player name (max 9 chars): "
 
 [node name="EnterServerAddress" type="Label" parent="."]
 layout_mode = 0

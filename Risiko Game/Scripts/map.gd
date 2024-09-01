@@ -7,10 +7,10 @@ extends Node2D
 
 signal map_prov_clicked(provID: int)
 
-
 func _ready():
 	# Connect to signal
-	GameData.connect("_prov_clicked", Callable(self, "_on_prov_clicked"))
+	GameData._prov_clicked.connect(_on_prov_clicked)
+	GameData.newGameSelectedProvince.connect(_on_new_map_prov)
 	
 	# Hide all maps except Map and curMap
 	$MouseMap.hide()
@@ -22,9 +22,9 @@ func _ready():
 	# Initialise shader parameters
 	mat.set_shader_parameter("base_color", Color8(100,0,0))
 	mat.set_shader_parameter("num_of_provinces", NUM_PROV)
-	var provColors: Array
-	for i in range(NUM_PROV):
-		provColors.append(Color.TRANSPARENT)
+	var provColors: Array = []
+	provColors.resize(NUM_PROV)
+	provColors.fill(Color.TRANSPARENT)
 	mat.set_shader_parameter("colors", provColors)
 	
 	# Load stuff onto provinces
@@ -61,27 +61,42 @@ func set_prov_color(provID: int, color: Color):
 	extracted[provID] = color
 	mat.set_shader_parameter("colors", extracted)
 
-func _on_prov_clicked(newProvID: int):
-	var oldProvID = GameData.get_selected_prov()._id
+func _on_new_map_prov(oldProvID: int, newProvID: int):
+	if(oldProvID == newProvID):
+		return
+	# Color out the previous province
+	if oldProvID != GameData.Province.WASTELAND_ID:
+		var provIDs: Array = [oldProvID]
+		var colors: Array = [Color.TRANSPARENT]
+		set_prov_colors(provIDs, colors)
+	
+	# Color in the new province
+	if newProvID != GameData.Province.WASTELAND_ID:
+		var provIDs: Array = [newProvID]
+		var colors: Array = [GameData.GAME_SEL_COLOR]
+		set_prov_colors(provIDs, colors)
+
+func _on_prov_clicked(oldProvID: int, newProvID: int):
 	if(oldProvID == newProvID):
 		return
 	# Color out previous province(s)
 	if oldProvID != GameData.Province.WASTELAND_ID:
-		var curProv = GameData.provinces[oldProvID]
-		var provIDs: Array = [oldProvID]
+		var oldProv = GameData.provinces[oldProvID]
+		var provIDs: Array = []
 		var colors: Array = []
-		provIDs.append_array(curProv._neighbors)
+		provIDs.append(oldProvID)
+		provIDs.append_array(oldProv._neighbors)
 		colors.resize(len(provIDs))
 		colors.fill(Color.TRANSPARENT)
 		set_prov_colors(provIDs, colors)
 	
 	# Color in new province(s)
-	GameData.set_selected_prov(newProvID)
 	if newProvID != GameData.Province.WASTELAND_ID:
-		var curProv = GameData.provinces[newProvID]
-		var provIDs: Array = [newProvID]
+		var newProv = GameData.provinces[newProvID]
+		var provIDs: Array = []
 		var colors: Array = []
-		provIDs.append_array(curProv._neighbors)
+		provIDs.append(newProvID)
+		provIDs.append_array(newProv._neighbors)
 		colors.resize(len(provIDs))
 		colors.fill(GameData.NEIGH_COLOR)
 		colors[0] = GameData.SEL_COLOR

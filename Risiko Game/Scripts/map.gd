@@ -1,15 +1,11 @@
 extends Node2D
 
 @onready var curMap: Sprite2D = $WastelandMap
-@onready var matLocal: Material = $MapLocal.material # For the province locally selected by the player
-@onready var matGlobal: Material = $MapGlobal.material # For the province selected in the game
-@onready var matPolitical: Material = $MapPolitical.material # For the colors of the players
+@onready var mat: Material = $OverlayMap.material # For all overlaying layers
 @onready var NUM_PROV: int = GameData.NUM_PROV
+@onready var mask: Array = [] # 0 = Global, 1 = Local, 2 = Political
 
 signal map_prov_clicked(provID: int)
-
-func setActivated(toSet: bool):
-	$MouseMap.activated = toSet
 
 func _ready():
 	# Connect to signals
@@ -22,18 +18,19 @@ func _ready():
 	$MouseMap.hide()
 	$DebugMap.hide()
 	$WastelandMap.hide()
-	$MapPolitical.hide()
-	$MapLocal.hide()
-	$MapGlobal.show()
+	$OverlayMap.show()
 	curMap.show()
 	
-	# Initialise shader parameters
-	var provColors: Array = []
-	provColors.resize(NUM_PROV)
-	provColors.fill(Color.TRANSPARENT)
-	initMat(provColors, matLocal)
-	initMat(provColors, matGlobal)
-	initMat(provColors, matPolitical)
+	# Initialize mask
+	for i in range(3):
+		var newArr: Array = []
+		newArr.resize(NUM_PROV)
+		newArr.fill(Color.TRANSPARENT)
+		mask.append(newArr)
+	# Initialize shader
+	mat.set_shader_parameter("base_color", Color8(100,0,0))
+	mat.set_shader_parameter("num_of_provinces", NUM_PROV)
+	apply_mask()
 	
 	# Load stuff onto provinces
 	for prov in GameData.provinces:
@@ -44,51 +41,44 @@ func _ready():
 		prov._owner = 0 # DEBUG
 		var newSold: Soldier_UI = Soldier_UI.new_soldier(prov._id, true)
 		#newSold.visibility_layer = 1 # IDK why this is here...
-		# Center the label
-		#var spriteSize: Vector2 = newSold.get_child(0).get_rect().size # Probs wrong
-		#newSold.position -= Vector2(spriteSize.x/2, spriteSize.y/2) # Probs wrong
 		$SoldierObjs.add_child(newSold)
 
-func initMat(provColors: Array, mat: Material):
-	mat.set_shader_parameter("base_color", Color8(100,0,0))
-	mat.set_shader_parameter("num_of_provinces", NUM_PROV)
-	mat.set_shader_parameter("colors", provColors)
 
-func _on_info_updated(provID: int):
+func foldMask():
+	var toReturn: Array = []
+	for i in range(NUM_PROV):
+		var toAdd: Color = Color8(0,0,0,0)
+		for j in range(3):
+			toAdd = toAdd.blend(mask[j][i])
+		toReturn.append(toAdd)
+	return toReturn
+
+func set_mask_color(id: int, color: Color, maskLevel: int):
+	mask[maskLevel][id] = color
+func set_mask_colors(ids: Array, colors: Array, maskLevel: int):
+	for i in range(len(ids)):
+		mask[maskLevel][ids[i]] = colors[i]
+func apply_mask():
+	mat.set_shader_parameter("colors", foldMask())
+
+func _on_info_updated(provID: int): # Update the political map
 	pass
 
-func set_prov_colors(provIDs: Array, colors: Array, mat: Material):
-	var extracted: Array = mat.get_shader_parameter("colors")
-	print(matLocal)
-	print(matGlobal)
-	print(matPolitical)
-	print(mat)
-	for i in range(len(provIDs)):
-		extracted[provIDs[i]] = colors[i]
-	mat.set_shader_parameter("colors", extracted)
-
-func set_prov_color(provID: int, color: Color, mat: Material):
-	var extracted: Array = mat.get_shader_parameter("colors")
-	print(str(GameData.localPlayerIndex) + ": b4: " + str(extracted))
-	extracted[provID] = color
-	print(str(GameData.localPlayerIndex) + ": AFTER: " + str(extracted))
-	mat.set_shader_parameter("colors", extracted)
-
 func _on_new_map_prov(oldProvID: int, newProvID: int):
-	print(str(GameData.localPlayerIndex) + ": " + "NEW GAME PROVINCE SELECTED") # DEBUG
-	if(oldProvID == newProvID):
+	if oldProvID == newProvID or GameData.localPlayerIndex == GameData.turnPlayerIndex:
 		return
 	# Color out the previous province
 	if oldProvID != GameData.Province.WASTELAND_ID:
-		set_prov_color(oldProvID, Color.TRANSPARENT, matGlobal)	
+		set_mask_color(oldProvID, Color.TRANSPARENT, 0) # 0=Global
+		apply_mask()
 	# Color in the new province
 	if newProvID != GameData.Province.WASTELAND_ID and \
 	   GameData.turnPlayerIndex != GameData.localPlayerIndex:
-		set_prov_color(newProvID, GameData.GAME_SEL_COLOR, matGlobal)
+		set_mask_color(newProvID, GameData.GAME_SEL_COLOR, 0) # 0=Global
+		apply_mask()
 
 
 func _on_prov_clicked(oldProvID: int, newProvID: int):
-	print(str(GameData.localPlayerIndex) + ": " +  "PROV CLICKED")
 	if(oldProvID == newProvID):
 		return
 	# Color out previous province(s)
@@ -100,7 +90,8 @@ func _on_prov_clicked(oldProvID: int, newProvID: int):
 		var colors: Array = []
 		colors.resize(len(provIDs))
 		colors.fill(Color.TRANSPARENT)
-		set_prov_colors(provIDs, colors, matLocal)
+		set_mask_colors(provIDs, colors, 1) # 1=Local
+		apply_mask()
 	
 	# Color in new province(s)
 	if newProvID != GameData.Province.WASTELAND_ID:
@@ -112,4 +103,5 @@ func _on_prov_clicked(oldProvID: int, newProvID: int):
 		colors.resize(len(provIDs))
 		colors.fill(GameData.NEIGH_COLOR)
 		colors[0] = GameData.SEL_COLOR
-		set_prov_colors(provIDs, colors, matLocal)
+		set_mask_colors(provIDs, colors, 1) # 1=Local
+		apply_mask()

@@ -149,8 +149,8 @@ func client_rec_data(data: String):
 	var json_obj = JSON.parse_string(data)
 	match json_obj["message_type"]:
 		"prov_selected":
-			if localPlayerIndex != turnPlayerIndex:
-				gameSelectedProvID = json_obj["data"]["newProvID"]
+			#if localPlayerIndex != turnPlayerIndex: # I don't think this is good
+			gameSelectedProvID = json_obj["data"]["newProvID"]
 		_:
 			pass
 

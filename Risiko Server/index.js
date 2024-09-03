@@ -15,16 +15,19 @@ class PlayerBaseInfo {
 
 class ProvinceInfo {
   soldiers = 0;
-  owner = 0;
+  owner = -1;
+  constructor(pSoldiers, pOwner) { this.soldiers = pSoldiers; this.owner = pOwner; }
 }
 
-let gameState = {
-  "current turn" : 0,
-  "province stats": []
+let game_state = {
+  "cur_phase": "lobby",
+  "cur_turn" : 0,
+  "prov_selected": -1,
+  "prov_stats": []
 }
 
 let players = [];
-const numProvinces = 42;
+const NUM_OF_PROV = 42;
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -52,6 +55,26 @@ let sendPlayersData = function() {
   });
 }
 
+let sendGameData = function() {
+  let index = 0;
+  wss.clients.forEach((ws)=>{
+    let toSend_json = {"message_type":"game_data","data":game_state};
+    console.log("SENDING: " + JSON.stringify(toSend_json));
+    ws.send(JSON.stringify(toSend_json));
+    index += 1;
+  });
+}
+
+let sendProvSelected = function(oldProvID) {
+  let index = 0;
+  wss.clients.forEach((ws)=>{
+    let toSend_json = {"message_type":"prov_selected","data":{"newProvID":game_state.prov_selected,"oldProvID": oldProvID}};
+    console.log("SENDING: " + JSON.stringify(toSend_json));
+    ws.send(JSON.stringify(toSend_json));
+    index += 1;
+  });
+}
+
 wss.on('connection', function connection(ws) {
   // Basically console.log but with the socket's id
   let print;
@@ -63,17 +86,16 @@ wss.on('connection', function connection(ws) {
         log.apply(console, ["[" + ws.id + "] " + first_parameter].concat(other_parameters));
     }; }
   ws.id = generatePlayerID();
-  print(wss.clients.size)
-  print("Connection started\n");
+  print("Connection started (num. of con.: " + wss.clients.size + ")\n");
   
-  
-  // Kick the client out
+  // Cases in which the client is kicked out
   if (wss.clients.size > 4) {
-    print("Too many clients (" + wss.clients.length + "). Trying to close this socket!")
+    print("Too many clients (" + wss.clients.length + ")! Trying to close this socket.")
+    ws.close();
+  } else if (game_state["cur_phase"] != "lobby") {
+    print("Lobby has closed (" + game_state["cur_phase"] + ")! Trying to close this socket.")
     ws.close();
   }
-  
-  
   
   ws.on('message', (message) => {
     // Print out the message to log
@@ -89,6 +111,7 @@ wss.on('connection', function connection(ws) {
       case "message": 
         toLog += "message"
         break;
+      
       // Received when a person joins the lobby
       case "player_info": 
         players.push(new PlayerBaseInfo(ws.id, data["name"], data["color"]));
@@ -96,9 +119,15 @@ wss.on('connection', function connection(ws) {
         // Send lobby_data to everyone (other players' data)
         sendPlayersData();
         break;
+      
       // Received when a player wants to start the game
       case "start_game":
-        // Resolve the random colors
+        // Initialise game_state
+        game_state["cur_turn"] = 0
+        for (let i = 0; i < NUM_OF_PROV; ++i) {
+          game_state["prov_stats"].push(new ProvinceInfo(0, -1))
+        }
+
         // Get available colors
         let avail_colors = [0x0000FFFF, 0xFF0000FF, 0x00FF00FF, 0xFFFF00FF] // brgy
         players.forEach((player)=>{
@@ -119,25 +148,26 @@ wss.on('connection', function connection(ws) {
           }
         });
         sendPlayersData();
-        
+        // Distribute soldiers among the players
         let soldiers = [];
-        let remainingSoldiers = numProvinces % players.length;
+        let remainingSoldiers = NUM_OF_PROV % players.length;
         for (let i = 0; i < players.length; i++) {
-          let toAdd = parseInt(numProvinces/players.length);
+          let toAdd = parseInt(NUM_OF_PROV/players.length);
           if(remainingSoldiers > 0)
             toAdd += 1;
           soldiers.push(toAdd);      
         }
-        toLog += "Soldiers: " + soldiers
+        toLog += ". Soldiers: " + soldiers
         // Send start_game message to everyone, tell them who starts
         wss.clients.forEach((_ws)=>{
           _ws.send(JSON.stringify({
             "message_type": "start_game",
-            "turn": 0, // The index of the player whose turn it is
+            "turn": game_state["cur_turn"], // The index of the player whose turn it is
             "soldiers": soldiers
           }));
         })
         break;
+      
       // When a player selects a new color
       case "color_selected":
         // Update the color selection of the player and then send the new lobby data to everyone
@@ -148,6 +178,13 @@ wss.on('connection', function connection(ws) {
         });
         sendPlayersData();
         break;
+
+      // When the player whose turn it is selects a new province
+      case "prov_selected":
+        game_state.prov_selected = data["newProvID"]
+        sendProvSelected(data["oldProvID"]);
+        break;
+      
       // DEFAULT
       default:
         toLog += "unknown(" + msg_type + ")";

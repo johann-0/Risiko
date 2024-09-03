@@ -38,7 +38,7 @@ func _process(_delta):
 	if _state == WebSocketPeer.STATE_OPEN:
 		while _socket.get_available_packet_count():
 			var data: String = _socket.get_packet().get_string_from_utf8()
-			print("WS_client: Recieved: %s" % [data])
+			print("WS_client: Received: %s" % [data])
 			received_data.emit(data)
 
 func _connect_to_url(url: String):

@@ -19,6 +19,3 @@ map = NodePath("../LeftMap")
 position = Vector2(1227, 0)
 
 [node name="Control" parent="." instance=ExtResource("4_xp87e")]
-
-[connection signal="map_prov_clicked" from="LeftMap" to="." method="_on_left_map_map_prov_clicked"]
-[connection signal="map_prov_clicked" from="RightMap" to="." method="_on_right_map_map_prov_clicked"]

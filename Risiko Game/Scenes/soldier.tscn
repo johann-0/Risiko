@@ -14,7 +14,16 @@ vframes = 8
 [node name="Strength" type="Label" parent="."]
 offset_left = -3.0
 offset_top = 4.0
-offset_right = 37.0
-offset_bottom = 27.0
+offset_right = 5.0
+offset_bottom = 14.0
 theme = ExtResource("3_ox8xh")
+text = "69"
+
+[node name="ToAdd" type="Label" parent="."]
+offset_left = -3.0
+offset_top = -13.0
+offset_right = 5.0
+offset_bottom = -3.0
+theme = ExtResource("3_ox8xh")
+theme_override_colors/font_color = Color(0.588235, 1, 0.588235, 1)
 text = "69"

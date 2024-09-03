@@ -1,12 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://dyeld0jqcr1i0"]
+[gd_scene load_steps=11 format=3 uid="uid://dyeld0jqcr1i0"]
 
 [ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
 [ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
 [ext_resource type="PackedScene" uid="uid://cfx0vrgsv86w5" path="res://Scenes/stat.tscn" id="3_36gpu"]
+[ext_resource type="Script" path="res://Scripts/banner_ignore_input.gd" id="3_n6hxg"]
 [ext_resource type="Texture2D" uid="uid://baa3pox2i0av3" path="res://Assets/ui/soldier_icon.png" id="5_mi587"]
 [ext_resource type="Texture2D" uid="uid://bt6d1qg77dhin" path="res://Assets/ui/top_tab.png" id="5_p3up7"]
 [ext_resource type="Texture2D" uid="uid://cvygsk8hd8rdn" path="res://Assets/ui/turn_icon.png" id="6_ocdlk"]
 [ext_resource type="Texture2D" uid="uid://bkg7g7dr52yaf" path="res://Assets/ui/avail_troops.png" id="7_y08sn"]
+[ext_resource type="Texture2D" uid="uid://cs2qyihny370t" path="res://Assets/ui/end_turn_normal.png" id="8_1ervx"]
+[ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="9_k1qyu"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_kh6vk")
@@ -17,21 +20,15 @@ anchors_preset = 0
 offset_right = 288.0
 offset_bottom = 162.0
 scale = Vector2(4, 4)
+mouse_filter = 2
 
-[node name="LowerBanner" type="Control" parent="Screen"]
-layout_mode = 2
-anchors_preset = 0
+[node name="LowerBanner" type="TextureRect" parent="Screen"]
+layout_mode = 0
 offset_top = 146.0
 offset_right = 288.0
 offset_bottom = 162.0
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.18
-
-[node name="Banner" type="TextureRect" parent="Screen/LowerBanner"]
-layout_mode = 0
-offset_right = 288.0
-offset_bottom = 16.0
 texture = ExtResource("2_nodni")
+script = ExtResource("3_n6hxg")
 
 [node name="NameStat" parent="Screen/LowerBanner" instance=ExtResource("3_36gpu")]
 layout_mode = 1
@@ -39,6 +36,13 @@ offset_left = 37.0
 offset_top = 3.0
 offset_right = 37.0
 offset_bottom = 3.0
+mouse_filter = 1
+
+[node name="Icon" parent="Screen/LowerBanner/NameStat" index="0"]
+mouse_filter = 0
+
+[node name="Value" parent="Screen/LowerBanner/NameStat" index="1"]
+mouse_filter = 0
 
 [node name="SoldiersStat" parent="Screen/LowerBanner" instance=ExtResource("3_36gpu")]
 layout_mode = 1
@@ -46,26 +50,29 @@ offset_left = 135.0
 offset_top = 3.0
 offset_right = 135.0
 offset_bottom = 3.0
+mouse_filter = 1
 
 [node name="Icon" parent="Screen/LowerBanner/SoldiersStat" index="0"]
+mouse_filter = 0
 texture = ExtResource("5_mi587")
 
-[node name="UpperBanner" type="Control" parent="Screen"]
-anchors_preset = 0
-offset_right = 288.0
-offset_bottom = 13.0
+[node name="Value" parent="Screen/LowerBanner/SoldiersStat" index="1"]
+mouse_filter = 0
 
-[node name="Banner" type="TextureRect" parent="Screen/UpperBanner"]
+[node name="UpperBanner" type="TextureRect" parent="Screen"]
 layout_mode = 0
 offset_right = 288.0
 offset_bottom = 14.0
 texture = ExtResource("5_p3up7")
+script = ExtResource("3_n6hxg")
 
 [node name="TurnStat" parent="Screen/UpperBanner" instance=ExtResource("3_36gpu")]
 layout_mode = 1
-offset_left = 76.0
+offset_left = 77.0
 offset_top = 2.0
-offset_right = -170.0
+offset_right = -169.0
+offset_bottom = 0.0
+mouse_filter = 1
 
 [node name="Icon" parent="Screen/UpperBanner/TurnStat" index="0"]
 texture = ExtResource("6_ocdlk")
@@ -76,9 +83,10 @@ text = ": Deploy"
 [node name="AvailTroops" parent="Screen/UpperBanner" instance=ExtResource("3_36gpu")]
 layout_mode = 1
 offset_left = 128.0
-offset_top = 1.75
-offset_right = 128.0
-offset_bottom = 1.75
+offset_top = 2.0
+offset_right = -138.0
+offset_bottom = -2.0
+mouse_filter = 1
 
 [node name="Icon" parent="Screen/UpperBanner/AvailTroops" index="0"]
 texture = ExtResource("7_y08sn")
@@ -89,8 +97,27 @@ text = ": 10"
 [node name="Players" type="Control" parent="Screen"]
 anchors_preset = 0
 offset_top = 23.0
-offset_right = 54.0
-offset_bottom = 125.0
+offset_right = 65.0
+offset_bottom = 49.0
+mouse_filter = 2
+
+[node name="EndTurn" type="TextureButton" parent="Screen"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 254.0
+offset_right = 288.0
+offset_bottom = 12.0
+texture_normal = ExtResource("8_1ervx")
+
+[node name="Label" type="Label" parent="Screen/EndTurn"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 33.0
+offset_bottom = 12.0
+mouse_filter = 1
+theme = ExtResource("9_k1qyu")
+text = "End Turn"
 
 [editable path="Screen/LowerBanner/NameStat"]
 [editable path="Screen/LowerBanner/SoldiersStat"]

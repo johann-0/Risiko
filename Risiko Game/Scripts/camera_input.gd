@@ -40,13 +40,13 @@ func handle_panning(delta):
 	
 	# Check for panning with the mouse
 	capPosition()
-	
-	
 
-func _input(event):
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+
+func _unhandled_input(event):
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
 		position -= event.relative / zoom
 	capPosition()
+
 
 func handle_zooming(_delta):
 	# Position of the mouse relative to the camera before zooming

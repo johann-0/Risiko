@@ -4,18 +4,25 @@ extends CanvasLayer
 
 func _ready():
 	GameData._prov_clicked.connect(_on_prov_clicked)
-	GameData.newTurnPlayerIndex.connect(_on_new_turn_player_index)
-	# Add the players to the UI
+	for province in GameData.provinces:
+		province.infoUpdated.connect(_on_prov_info_updated)
+	$Screen/EndTurn.pressed.connect(_on_end_turn_clicked)
+	
+	# Add the players and available troops to the UI
 	var index = 0
 	for player in GameData.players:
 		var player_ui = Player_UI.new_player_UI(Vector2i(0,index * 14), player._id, player._name, player._color)
 		$Screen/Players.add_child(player_ui)
 		index += 1
+	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
 	
-	_on_new_turn_player_index((GameData.turnPlayerIndex + 1) % GameData.players.size(), GameData.turnPlayerIndex)
+	newTurn((GameData.turnPlayerIndex + 1) % GameData.players.size(), GameData.turnPlayerIndex)
 
-func _on_new_turn_player_index(oldTurnPlayerIndex: int, newTurnPlayerIndex: int):
-	print("NEW PLAYER'S TURN! " + str(oldTurnPlayerIndex) + " " + str(newTurnPlayerIndex))
+func _on_prov_info_updated(provID: int):
+	# Update the available troops
+	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
+
+func newTurn(oldTurnPlayerIndex: int, newTurnPlayerIndex: int):
 	if oldTurnPlayerIndex != -1:
 		$Screen/Players.get_child(oldTurnPlayerIndex).setBackgroundColor(Color.BLACK)
 	if newTurnPlayerIndex != -1:
@@ -25,6 +32,7 @@ func _on_new_turn_player_index(oldTurnPlayerIndex: int, newTurnPlayerIndex: int)
 		$Screen/EndTurn.show()
 	else:
 		$Screen/EndTurn.hide()
+	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
 
 func _on_prov_clicked(_oldProvID: int, _newProvID: int):
 	var selProv = GameData.get_selected_prov()
@@ -35,4 +43,6 @@ func _on_prov_clicked(_oldProvID: int, _newProvID: int):
 		provSoldiers = str(selProv._soldiers)
 	lowerBanProvName.text = ": " + provName
 	lowerBanProvSold.text = ": " + provSoldiers
-	
+
+func _on_end_turn_clicked():
+	print("CLICKED!!")

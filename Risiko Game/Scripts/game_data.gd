@@ -4,6 +4,7 @@ signal _prov_clicked(oldProvID: int, newProvID: int)
 signal newTurnPlayerIndex(oldIndex: int, newIndex: int)
 signal newPhase(oldPhase: Phase, newPhase: Phase)
 signal newGameSelectedProvince(oldProvID: int, newProvID: int)
+signal soldierDeployed(provID: int)
 
 const SEL_COLOR: Color = Color8(0, 255, 0, 100)
 const NEIGH_COLOR: Color = Color8(0, 255, 0, 50)
@@ -33,6 +34,7 @@ var turnPlayerIndex: int = -1:
 	set(newIndex):
 		var oldIndex = turnPlayerIndex
 		turnPlayerIndex = newIndex
+		print("NEW PLAYER'S TURN! " + str(oldIndex) + " " + str(newIndex))
 		newTurnPlayerIndex.emit(oldIndex, newIndex)
 var gamePhase: Phase = Phase.INIT_DEPLOY
 var localPlayerIndex: int = 0
@@ -85,10 +87,10 @@ class Province:
 	var _name: String
 	var _neighbors: Array
 	var _center: Vector2
+	var _owner: int
 	var _soldiers: int
 	var _to_add: int = 0
-	var _owner: int
-	func updateInfo(pOwner: int, pToAdd: int, pSoldiers: int = _soldiers):
+	func updateInfo(pOwner: int, pSoldiers: int, pToAdd: int):
 		if pOwner == -1 or (pSoldiers + pToAdd) == 0: # If province is empty
 			_owner = -1
 			_soldiers = 0
@@ -97,14 +99,27 @@ class Province:
 			_owner = pOwner
 			_soldiers = pSoldiers
 			_to_add = pToAdd
+		print("Prov updated: "+_to_string())
 		infoUpdated.emit(_id)
 	func addDeploy(pOwner: int):
-		updateInfo(pOwner, _to_add + 1, _soldiers)
+		GameData.turnAvailSoldiers -= 1
+		updateInfo(pOwner, _soldiers, _to_add + 1)
+		GameData.client._send_dict({
+			"message_type": "prov_updated",
+			"data": {"prov_id":_id, "owner":_owner, "soldiers":_soldiers, "to_add":_to_add}})
 	func removeDeploy(pOwner: int):
-		updateInfo(pOwner, _to_add - 1, _soldiers)
+		GameData.turnAvailSoldiers += 1
+		updateInfo(pOwner, _soldiers, _to_add - 1)
+		GameData.client._send_dict({
+			"message_type": "prov_updated",
+			"data": {"prov_id":_id, "owner":_owner, "soldiers":_soldiers, "to_add":_to_add}})
 	func _init(id: int, name: String, neighbors: Array, soldiers: int, center: Vector2, owner: int = -1):
 		_id = id; _name = name; _neighbors = neighbors; _soldiers = soldiers
 		_center = center; _owner = owner
+	func _to_JSON():
+		return {"id": _id, "name": _name, "owner": _owner, "soldiers": _soldiers, "to_add": _to_add}
+	func _to_string():
+		return JSON.stringify(_to_JSON())
 	static var WASTELAND_ID: int = -1
 	static func WASTELAND():
 		var wasteland = Province.new(WASTELAND_ID, "Wasteland", [], 0, Vector2(0,0))

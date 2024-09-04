@@ -11,6 +11,7 @@ func _ready():
 	# Connect to signals
 	GameData._prov_clicked.connect(_on_prov_clicked)
 	GameData.newGameSelectedProvince.connect(_on_new_map_prov)
+	GameData.newTurnPlayerIndex.connect(_on_new_turn)
 	for province in GameData.provinces:
 		province.infoUpdated.connect(_on_info_updated)
 	
@@ -50,6 +51,15 @@ func foldMask():
 		toReturn.append(toAdd)
 	return toReturn
 
+func reset_mask(maskLevel: int):
+	var colors: Array = []
+	colors.resize(NUM_PROV)
+	colors.fill(Color.TRANSPARENT)
+	var provIDs: Array = []
+	for i in NUM_PROV:
+		provIDs.append(i)
+	set_mask_colors(provIDs, colors, maskLevel)
+	
 func set_mask_color(id: int, color: Color, maskLevel: int):
 	mask[maskLevel][id] = color
 func set_mask_colors(ids: Array, colors: Array, maskLevel: int):
@@ -81,6 +91,11 @@ func _on_new_map_prov(oldProvID: int, newProvID: int):
 		set_mask_color(newProvID, GameData.GAME_SEL_COLOR, 0) # 0=Global
 		apply_mask()
 
+func _on_new_turn(oldID: int, newID: int):
+	print("resetting mask") # DEBUG
+	# Reset the global mask
+	reset_mask(0) # 0=Global
+	apply_mask()
 
 func _on_prov_clicked(oldProvID: int, newProvID: int):
 	if(oldProvID == newProvID):

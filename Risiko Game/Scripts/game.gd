@@ -15,6 +15,7 @@ func _ready():
 	client.received_data.connect(client_rec_data)
 	client.connecting.connect(client_connecting)
 	GameData.newTurnPlayerIndex.connect(on_new_turn)
+	$Control/Screen/EndTurn.pressed.connect(_on_end_turn_clicked)
 	
 	# First turn has started
 	GameData.turnPlayerIndex = GameData.turnPlayerIndex
@@ -23,6 +24,8 @@ func on_new_turn(oldPlayerIndex: int, newPlayerIndex: int):
 	print("new turn")
 	match GameData.gamePhase:
 		GameData.Phase.INIT_DEPLOY:
+			for province in GameData.provinces:
+				province.commitDeployment()
 			if GameData.players[newPlayerIndex]._soldiers > 0:
 				GameData.players[newPlayerIndex]._soldiers -= 1
 				GameData.turnAvailSoldiers = 1
@@ -61,10 +64,24 @@ func client_rec_data(data_str: String):
 			GameData.gameSelectedProvID = newProvID
 			print("Prov selected: " + str(newProvID))
 		"prov_updated":
+			GameData.turnAvailSoldiers = data["avail_soldiers"]
 			if GameData.turnPlayerIndex != GameData.localPlayerIndex:
-				var prov: GameData.Province = GameData.provinces[data["prov_id"]]
-				prov._soldiers = data["soldiers"]
-				prov.updateInfo(data["owner"], data["soldiers"], data["to_add"])
-			print("Prov updated: " + str(GameData.provinces[data["prov_id"]]))
+				var prov_ = data["prov"]
+				var prov: GameData.Province = GameData.provinces[prov_["id"]]
+				prov._soldiers = prov_["soldiers"]
+				prov.updateInfo(prov_["owner"], prov_["soldiers"], prov_["to_add"])
+			print("Prov updated: " + str(GameData.provinces[data["prov"]["id"]]))
+		"end_turn":
+			GameData.turnPlayerIndex = data["new_prov_id"]
+			GameData.turnAvailSoldiers = data["avail_soldiers"]
+			if GameData.turnPlayerIndex == GameData.localPlayerIndex:
+				GameData.selectedProvID = GameData.selectedProvID
 		_:
 			print("")
+
+func _on_end_turn_clicked():
+	print("End turn button clicked!")
+	# Make sure player is allowed to end their turn
+	if GameData.turnAvailSoldiers != 0:
+		return
+	client._send_dict({"message_type": "end_turn"})

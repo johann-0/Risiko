@@ -1,7 +1,7 @@
 extends Node2D
 
 signal _prov_clicked(oldProvID: int, newProvID: int)
-signal newTurnPlayerIndex(oldIndex: int, newIndex: int)
+signal newTurnPlayerIndex(oldIndex: int, newIndex: int) # DEBUG: need to add phase to this somehow
 signal newPhase(oldPhase: Phase, newPhase: Phase)
 signal newGameSelectedProvince(oldProvID: int, newProvID: int)
 signal soldierDeployed(provID: int)
@@ -106,13 +106,15 @@ class Province:
 		updateInfo(pOwner, _soldiers, _to_add + 1)
 		GameData.client._send_dict({
 			"message_type": "prov_updated",
-			"data": {"prov_id":_id, "owner":_owner, "soldiers":_soldiers, "to_add":_to_add}})
+			"data": {"prov": _to_JSON(), "avail_soldiers": GameData.turnAvailSoldiers}})
 	func removeDeploy(pOwner: int):
 		GameData.turnAvailSoldiers += 1
 		updateInfo(pOwner, _soldiers, _to_add - 1)
 		GameData.client._send_dict({
 			"message_type": "prov_updated",
-			"data": {"prov_id":_id, "owner":_owner, "soldiers":_soldiers, "to_add":_to_add}})
+			"data": {"prov": _to_JSON(), "avail_soldiers": GameData.turnAvailSoldiers}})
+	func commitDeployment():
+		updateInfo(_owner, _soldiers + _to_add, 0)
 	func _init(id: int, name: String, neighbors: Array, soldiers: int, center: Vector2, owner: int = -1):
 		_id = id; _name = name; _neighbors = neighbors; _soldiers = soldiers
 		_center = center; _owner = owner

@@ -16,20 +16,36 @@ class ProvinceInfo {
   to_add = 0;
   constructor(pID, pOwner, pSoldiers, pToAdd) { this.id = pID; this.owner = pOwner; this.soldiers = pSoldiers; this.to_add = pToAdd; }
   toString() { return JSON.stringify(this.toJSON()); }
-  toJSON() { return {"prov_id": this.id, "owner": this.owner, "soldiers": this.soldiers, "to_add": this.to_add}; }
+  toJSON() { return {"id": this.id, "owner": this.owner, "soldiers": this.soldiers, "to_add": this.to_add}; }
 }
 
 let game_state = {
-  "cur_phase": "lobby",
+  "cur_phase": "lobby", // lobby -> init_deploy -> [deploy, attack, move]
   "cur_turn" : 0,
   "prov_selected": -1,
-  "prov_stats": []
+  "prov_stats": [],
+  "avail_troops": 0
 }
 
 let players = [];
 const NUM_OF_PROV = 42;
 
 const wss = new WebSocketServer({ port: 8080 });
+
+let resetServer = function () {
+  console.log("shitsicles")
+  wss.clients.forEach((ws)=>{
+    ws.close()
+  })
+  game_state = {
+    "cur_phase": "lobby", // lobby -> init_deploy -> [deploy, attack, move]
+    "cur_turn" : 0,
+    "prov_selected": -1,
+    "prov_stats": [],
+    "avail_troops": 0
+  }
+  players = []
+}
 
 let generatePlayerID = function () {
   function isIDunique(id) {
@@ -54,7 +70,6 @@ let sendPlayersData = function() {
     index += 1;
   });
 }
-
 let sendGameData = function() {
   let index = 0;
   wss.clients.forEach((ws)=>{
@@ -73,18 +88,36 @@ let sendProvSelected = function(oldProvID) {
     index += 1;
   });
 }
-let sendProvUpdated = function(provID) {
+let sendProvUpdated = function(provID, avail_soldiers) {
   let prov = game_state["prov_stats"][provID];
   let index = 0;
   wss.clients.forEach((ws)=>{
-    let toSend_json = {"message_type": "prov_updated", "data": prov.toJSON()};
+    let toSend_json = {"message_type": "prov_updated", "data": {"prov": prov.toJSON(), "avail_soldiers": avail_soldiers}};
     console.log("SENDING: " + JSON.stringify(toSend_json));
     ws.send(JSON.stringify(toSend_json));
     index += 1;
   });
 }
+let sendEndTurn = function(newProvID) {
+  let index = 0;
+  wss.clients.forEach((ws)=>{
+    let avail_soldiers = 0
+    switch (game_state["cur_phase"]) {
+      case "init_deploy":
+        avail_soldiers = 1
+        break;
+      case "deploy":
+        // Calculate how many soldiers a player has
+      default: break;
+    }
+    let toSend_json = {"message_type": "end_turn", "data": {"new_prov_id": newProvID, "avail_soldiers": avail_soldiers}};
+    console.log("SENDING: " + JSON.stringify(toSend_json));
+    ws.send(JSON.stringify(toSend_json));
+  });
+}
 
 wss.on('connection', function connection(ws) {
+  console.log("Shitsicles")
   // Basically console.log but with the socket's id
   let print;
   { var log = console.log;
@@ -132,20 +165,21 @@ wss.on('connection', function connection(ws) {
       // Received when a player wants to start the game
       case "start_game":
         // Initialise game_state
-        game_state["cur_turn"] = 0
+        game_state["cur_turn"] = 0;
         for (let i = 0; i < NUM_OF_PROV; ++i) {
-          game_state["prov_stats"].push(new ProvinceInfo(i, -1, 0, 0))
+          game_state["prov_stats"].push(new ProvinceInfo(i, -1, 0, 0));
         }
+        game_state["cur_phase"] = "init_deploy";
 
         // Get available colors
-        let avail_colors = [0x0000FFFF, 0xFF0000FF, 0x00FF00FF, 0xFFFF00FF] // brgy
+        let avail_colors = [0x0000FFFF, 0xFF0000FF, 0x00FF00FF, 0xFFFF00FF]; // brgy
         players.forEach((player)=>{
           for (let i = 0; i < avail_colors.length; ++i) {
             if (avail_colors[i] == player.color) {
-              avail_colors.splice(i,1);
+              avail_colors.splice(i, 1);
               break;
-            }
-          }
+            };
+          };
         });
         //toLog += "Available colors: " + avail_colors
         // Give out the available colors
@@ -195,12 +229,22 @@ wss.on('connection', function connection(ws) {
         break;
       
       case "prov_updated":
-        let prov_info = game_state["prov_stats"][data["prov_id"]];
-        prov_info.owner = data["owner"];
-        prov_info.soldiers = data["soldiers"];
-        prov_info.to_add = data["to_add"];
+        let prov_ = data["prov"];
+        let prov_info = game_state["prov_stats"][prov_["id"]];
+        prov_info.owner = prov_["owner"];
+        prov_info.soldiers = prov_["soldiers"];
+        prov_info.to_add = prov_["to_add"];
+        let avail_soldiers = data["avail_soldiers"]
         toLog += "province: " + prov_info.toString()
-        sendProvUpdated(prov_info.id);
+        sendProvUpdated(prov_info.id, avail_soldiers);
+        break;
+      case "end_turn":
+        let oldProvID = game_state["cur_turn"];
+        toLog += "oldProv: " + oldProvID + ".";
+        let newProvID = (oldProvID + 1) % players.length;
+        game_state["cur_turn"] = newProvID;
+        toLog += "newProv: " + newProvID;
+        sendEndTurn(newProvID);
         break;
       // DEFAULT
       default:
@@ -211,22 +255,30 @@ wss.on('connection', function connection(ws) {
   });
   
   ws.on("close", (event) => {
-    // Delete this player's data from the lobby
-    let indexToDelete = -1;
-    let counter = 0;
-    players.forEach((player)=>{
-      if (player.id == ws.id)
-        indexToDelete = counter;
-      counter += 1;
-    });
-    players.splice(indexToDelete, 1)
-    
-    let players_str = ""
-    players.forEach((player)=>{players_str += player.toString() + ", "})
-    print("Connection closed (remaining players: %s)", players_str);
-    
-    // Send new lobby data to all sockets
-    sendPlayersData();
-    console.log("");
+    switch (game_state["cur_phase"]) {
+      case "lobby":
+        // Delete this player's data from the lobby
+        let indexToDelete = -1;
+        let counter = 0;
+        players.forEach((player)=>{
+          if (player.id == ws.id)
+            indexToDelete = counter;
+          counter += 1;
+        });
+        players.splice(indexToDelete, 1)
+        
+        let players_str = ""
+        players.forEach((player)=>{players_str += player.toString() + ", "})
+        print("Connection closed (remaining players: %s)", players_str);
+        
+        // Send new lobby data to all sockets
+        sendPlayersData();
+        console.log("");
+        break;
+      default:
+        // Disconnect everyone and reset the lobby?
+        resetServer();
+        break;
+    }
   })
 });

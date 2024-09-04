@@ -111,7 +111,6 @@ func client_rec_data(data: String):
 					_: # Random is selected (Azure)
 						pass
 		"start_game":
-			#GameData.client = _client
 			GameData.turnPlayerIndex = json_obj["turn"]
 			var index: int = 0
 			for player in GameData.players:

@@ -15,11 +15,16 @@ func _ready():
 	_on_new_turn_player_index((GameData.turnPlayerIndex + 1) % GameData.players.size(), GameData.turnPlayerIndex)
 
 func _on_new_turn_player_index(oldTurnPlayerIndex: int, newTurnPlayerIndex: int):
-	print("NEW PLAYER INDEX!")
+	print("NEW PLAYER'S TURN! " + str(oldTurnPlayerIndex) + " " + str(newTurnPlayerIndex))
 	if oldTurnPlayerIndex != -1:
 		$Screen/Players.get_child(oldTurnPlayerIndex).setBackgroundColor(Color.BLACK)
 	if newTurnPlayerIndex != -1:
 		$Screen/Players.get_child(newTurnPlayerIndex).setBackgroundColor(Color.GREEN)
+	
+	if newTurnPlayerIndex == GameData.localPlayerIndex:
+		$Screen/EndTurn.show()
+	else:
+		$Screen/EndTurn.hide()
 
 func _on_prov_clicked(_oldProvID: int, _newProvID: int):
 	var selProv = GameData.get_selected_prov()

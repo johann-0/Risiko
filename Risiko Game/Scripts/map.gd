@@ -37,19 +37,16 @@ func _ready():
 		if prov._center == Vector2(-1,-1):
 			print("Province is a WIP")
 			continue
-		prov._soldiers = prov._id # DEBUG
-		prov._owner = 0 # DEBUG
 		var newSold: Soldier_UI = Soldier_UI.new_soldier(prov._id, true)
 		#newSold.visibility_layer = 1 # IDK why this is here...
 		$SoldierObjs.add_child(newSold)
-
 
 func foldMask():
 	var toReturn: Array = []
 	for i in range(NUM_PROV):
 		var toAdd: Color = Color8(0,0,0,0)
 		for j in range(3):
-			toAdd = toAdd.blend(mask[j][i])
+			toAdd = toAdd.blend(mask[2-j][i])
 		toReturn.append(toAdd)
 	return toReturn
 
@@ -62,7 +59,14 @@ func apply_mask():
 	mat.set_shader_parameter("colors", foldMask())
 
 func _on_info_updated(provID: int): # Update the political map
-	pass
+	var _owner = GameData.provinces[provID]._owner
+	if _owner == -1:
+		set_mask_color(provID, Color.TRANSPARENT, 2) # 2=Political
+	else:
+		var color: Color = GameData.players[_owner]._color
+		color = color.darkened(0.5)
+		set_mask_color(provID, color, 2) # 2=Political
+	apply_mask()
 
 func _on_new_map_prov(oldProvID: int, newProvID: int):
 	if oldProvID == newProvID or GameData.localPlayerIndex == GameData.turnPlayerIndex:

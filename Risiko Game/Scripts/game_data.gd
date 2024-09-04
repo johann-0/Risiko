@@ -15,7 +15,6 @@ var players: Array = []
 
 var gameSelectedProvID: int = Province.WASTELAND_ID:
 	set(newProvID):
-		print("GAME SELECTED PROVINCE")
 		var oldProvID = gameSelectedProvID
 		gameSelectedProvID = newProvID
 		newGameSelectedProvince.emit(oldProvID, newProvID)
@@ -35,8 +34,9 @@ var turnPlayerIndex: int = -1:
 		var oldIndex = turnPlayerIndex
 		turnPlayerIndex = newIndex
 		newTurnPlayerIndex.emit(oldIndex, newIndex)
-var gamePhase: Phase = Phase.DEPLOY
+var gamePhase: Phase = Phase.INIT_DEPLOY
 var localPlayerIndex: int = 0
+var turnAvailSoldiers: int = 0
 
 const Client = preload("res://Scripts/WS_client.gd")
 @onready var client: Client
@@ -54,7 +54,7 @@ class ServerName:
 
 var serverName: ServerName = ServerName.DEFAULT_SERVER_NAME()
 
-enum Phase { DEPLOY, ATTACK, FORTIFY}
+enum Phase { INIT_DEPLOY, DEPLOY, ATTACK, FORTIFY}
 
 class Player:
 	var _id: int
@@ -62,10 +62,7 @@ class Player:
 	var _color: Color
 	var _soldiers: int
 	func _init(id: int, name: String, color: Color = Color.AZURE, soldiers: int = 0):
-		_id = id
-		_name = name
-		_color = color
-		_soldiers = soldiers
+		_id = id; _name = name; _color = color; _soldiers = soldiers
 	static func DEFAULT_PLAYER():
 		return Player.new(0, "Player_" + str(randi()%64))
 	func equals(otherPlayer: Player):
@@ -88,73 +85,39 @@ class Province:
 	var _name: String
 	var _neighbors: Array
 	var _center: Vector2
-	var _soldiers: int:
-		set(newSol):
-			var oldSol = _soldiers
-			_soldiers = newSol
-			if newSol == 0 and _owner != -1:
-				_owner = -1
-			if oldSol == 0 and newSol != 0:
-				_owner = GameData.localPlayerIndex
-			infoUpdated.emit(_id)
-	var _to_add: int = 0:
-		set(newAdd):
-			var oldAdd = _to_add
-			_to_add = newAdd
-			if newAdd == 0 and _soldiers == 0 and _owner != -1:
-				_owner = -1
-			if oldAdd == 0 and newAdd != 0:
-				_owner = GameData.localPlayerIndex
-			infoUpdated.emit(_id)
-	var _owner: int:
-		set(newOwner):
-			_owner = newOwner
-			if newOwner == -1 and _soldiers != 0:
-				_soldiers = 0
-			infoUpdated.emit(_id)
-	static var WASTELAND_ID: int = -1
+	var _soldiers: int
+	var _to_add: int = 0
+	var _owner: int
+	func updateInfo(pOwner: int, pToAdd: int, pSoldiers: int = _soldiers):
+		if pOwner == -1 or (pSoldiers + pToAdd) == 0: # If province is empty
+			_owner = -1
+			_soldiers = 0
+			_to_add = 0
+		else:
+			_owner = pOwner
+			_soldiers = pSoldiers
+			_to_add = pToAdd
+		infoUpdated.emit(_id)
+	func addDeploy(pOwner: int):
+		updateInfo(pOwner, _to_add + 1, _soldiers)
+	func removeDeploy(pOwner: int):
+		updateInfo(pOwner, _to_add - 1, _soldiers)
 	func _init(id: int, name: String, neighbors: Array, soldiers: int, center: Vector2, owner: int = -1):
-		_id = id
-		_name = name
-		_neighbors = neighbors
-		_soldiers = soldiers
-		_center = center
-		_owner = owner
+		_id = id; _name = name; _neighbors = neighbors; _soldiers = soldiers
+		_center = center; _owner = owner
+	static var WASTELAND_ID: int = -1
 	static func WASTELAND():
 		var wasteland = Province.new(WASTELAND_ID, "Wasteland", [], 0, Vector2(0,0))
 		return wasteland
 
-
 func _ready():
 	players.append(Player.DEFAULT_PLAYER())
-	add_provinces_to_arr()
-	
-	provinces[0]._soldiers = 4
+	get_provinces_from_json()
 	
 	client = Client.new()
-	client.connected.connect(client_connected)
-	client.disconnected.connect(client_disconnected)
-	client.received_data.connect(client_rec_data)
-	client.connecting.connect(client_connecting)
 	add_child(client)
 
-
-func client_connected():
-	pass
-func client_disconnected():
-	pass
-func client_connecting():
-	pass
-func client_rec_data(data: String):
-	var json_obj = JSON.parse_string(data)
-	match json_obj["message_type"]:
-		"prov_selected":
-			#if localPlayerIndex != turnPlayerIndex: # I don't think this is good
-			gameSelectedProvID = json_obj["data"]["newProvID"]
-		_:
-			pass
-
-func add_provinces_to_arr():
+func get_provinces_from_json():
 	var file = FileAccess.open("res://Assets/provinces.json", FileAccess.READ)
 	var text = file.get_as_text()
 	var json = JSON.new()
@@ -171,24 +134,16 @@ func add_provinces_to_arr():
 		provinces.append(newProv)
 	
 	# Sort the array by province id
-	var _id_sort = func (p1: Province, p2: Province):
+	var id_sort = func (p1: Province, p2: Province):
 		if p1._id < p2._id:
 			return true
 		return false
-	provinces.sort_custom(_id_sort)
-
-
-func id_sort(p1: Province, p2: Province):
-	if p1._id < p2._id:
-		return true
-	return false
-
+	provinces.sort_custom(id_sort)
 
 func get_selected_prov():
 	if selectedProvID == Province.WASTELAND_ID:
 		return Province.WASTELAND()
 	return provinces[selectedProvID]
-
 
 func players_to_JSON():
 	var toReturn = []

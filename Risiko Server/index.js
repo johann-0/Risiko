@@ -9,7 +9,7 @@ class PlayerBaseInfo {
   toJSON() { return {"id": this.id,"name": this.name, "color": this.color}; }
 }
 
-class ProvinceInfo {
+class Province {
   id = -1;
   owner = -1;
   soldiers = 0;
@@ -23,8 +23,9 @@ let game_state = {
   "cur_phase": "lobby", // lobby -> init_deploy -> [deploy, attack, move]
   "cur_turn" : 0,
   "prov_selected": -1,
-  "prov_stats": [],
-  "avail_troops": 0
+  "provinces": [],
+  "avail_troops": 0,
+  "random_deployment": false,
 }
 
 let players = [];
@@ -33,7 +34,6 @@ const NUM_OF_PROV = 42;
 const wss = new WebSocketServer({ port: 8080 });
 
 let resetServer = function () {
-  console.log("shitsicles")
   wss.clients.forEach((ws)=>{
     ws.close()
   })
@@ -41,10 +41,33 @@ let resetServer = function () {
     "cur_phase": "lobby", // lobby -> init_deploy -> [deploy, attack, move]
     "cur_turn" : 0,
     "prov_selected": -1,
-    "prov_stats": [],
-    "avail_troops": 0
+    "provinces": [],
+    "avail_troops": 0,
+    "random_deployment": false,
   }
   players = []
+}
+// Function from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffle_arr(array) {
+  let currentIndex = array.length;
+  while (currentIndex != 0) { // While there remain elements to shuffle
+    let randomIndex = Math.floor(Math.random() * currentIndex); // Pick a remaining element...
+    --currentIndex;
+    [array[currentIndex], array[randomIndex]] = [ // And swap it with the current element.
+      array[randomIndex], array[currentIndex]];
+  }
+}
+let distributeProvinces = function (soldiers) {
+  // Array shows each provinces owners (initially no owner = -1)
+  let prov_owners = [];
+  soldiers.forEach((soldier_amount, idx)=>{
+    prov_owners = prov_owners.concat(Array.from({length: soldier_amount}, ()=>idx))
+  });
+  shuffle_arr(prov_owners);
+  game_state["provinces"].forEach((province, index)=>{
+    province.owner = prov_owners[index];
+  });
+  return prov_owners;
 }
 
 let generatePlayerID = function () {
@@ -57,11 +80,37 @@ let generatePlayerID = function () {
   do { newID = Math.abs(parseInt(Math.random() * 1000)) % 100; } while(isIDunique(newID) == false);
   return newID;
 }
+let calculateSoldiers = function (player_index) {
+  let toReturn = 0;
+  let owned_provs = 0;
+  //                [na, sa, af, eu, as, oc]
+  let last_provs  = [ 8, 12, 18, 25, 37, 41];
+  let bonuses     = [ 5,  2,  3,  5,  7,  2];
+  let cont_full = true;
+  let cont_idx = 0;
+  game_state["provinces"].forEach((prov)=>{
+    if (prov.owner == player_index)
+      owned_provs += 1;
+    else
+      cont_full = false;
+    if (prov.id == last_provs[cont_idx]) {
+      if(cont_full == true)
+        toReturn += bonuses[cont_idx];
+      cont_idx += 1;
+      cont_full = true;
+    }
+  });
+  toReturn += Math.floor(owned_provs / 3);
+  if (toReturn < 3)
+    return 3;
+  else
+    return toReturn;
+}
 
 let sendPlayersData = function() {
   let index = 0;
   wss.clients.forEach((ws)=>{
-    let toSend_json = {"message_type":"lobby_data","data":[],"index":index};
+    let toSend_json = {"message_type":"lobby_data", "data":[], "index":index, "random_deployment":game_state["random_deployment"]};
     players.forEach((player) => {
       toSend_json["data"].push(player.toJSON());
     });
@@ -89,7 +138,7 @@ let sendProvSelected = function(oldProvID) {
   });
 }
 let sendProvUpdated = function(provID, avail_soldiers) {
-  let prov = game_state["prov_stats"][provID];
+  let prov = game_state["provinces"][provID];
   let index = 0;
   wss.clients.forEach((ws)=>{
     let toSend_json = {"message_type": "prov_updated", "data": {"prov": prov.toJSON(), "avail_soldiers": avail_soldiers}};
@@ -167,7 +216,7 @@ wss.on('connection', function connection(ws) {
         // Initialise game_state
         game_state["cur_turn"] = 0;
         for (let i = 0; i < NUM_OF_PROV; ++i) {
-          game_state["prov_stats"].push(new ProvinceInfo(i, -1, 0, 0));
+          game_state["provinces"].push(new Province(i, -1, 0, 0));
         }
         game_state["cur_phase"] = "init_deploy";
 
@@ -202,23 +251,34 @@ wss.on('connection', function connection(ws) {
         }
         toLog += ". Soldiers: " + soldiers
         // Send start_game message to everyone, tell them who starts
-        wss.clients.forEach((_ws)=>{
-          _ws.send(JSON.stringify({
+        let toSend_json = {};
+        if (game_state["random_deployment"] == false) {
+          toSend_json = {
             "message_type": "start_game",
             "turn": game_state["cur_turn"], // The index of the player whose turn it is
             "soldiers": soldiers
-          }));
-        })
+          };
+        } else {
+          // Distribute the provinces
+          
+          toSend_json = {
+            "message_type": "start_game_rand",
+            "turn": game_state["cur_turn"],
+            "prov_owners": distributeProvinces(soldiers) // TODO (current working area)
+          }
+        }
+        wss.clients.forEach((_ws)=>{_ws.send(JSON.stringify(toSend_json));});
         break;
       
-      // When a player selects a new color
-      case "color_selected":
+      // When a player selects a new color or toggles random deployment
+      case "lobby_updated":
         // Update the color selection of the player and then send the new lobby data to everyone
         players.forEach((player)=>{
           if (player.id == ws.id) {
-            player.color = message_json["data"];
+            player.color = message_json["data"]["color"];
           }
         });
+        game_state["random_deployment"] = message_json["data"]["random_deployment"]
         sendPlayersData();
         break;
 
@@ -230,7 +290,7 @@ wss.on('connection', function connection(ws) {
       
       case "prov_updated":
         let prov_ = data["prov"];
-        let prov_info = game_state["prov_stats"][prov_["id"]];
+        let prov_info = game_state["provinces"][prov_["id"]];
         prov_info.owner = prov_["owner"];
         prov_info.soldiers = prov_["soldiers"];
         prov_info.to_add = prov_["to_add"];
@@ -238,6 +298,8 @@ wss.on('connection', function connection(ws) {
         toLog += "province: " + prov_info.toString()
         sendProvUpdated(prov_info.id, avail_soldiers);
         break;
+      
+      // When new turn
       case "end_turn":
         let oldProvID = game_state["cur_turn"];
         toLog += "oldProv: " + oldProvID + ".";
@@ -277,6 +339,7 @@ wss.on('connection', function connection(ws) {
         break;
       default:
         // Disconnect everyone and reset the lobby?
+        console.log("Connection closed (" + ws.id + "). Resetting server.");
         resetServer();
         break;
     }

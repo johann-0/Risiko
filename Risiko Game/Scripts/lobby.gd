@@ -8,6 +8,8 @@ func _ready():
 	# Initializing
 	_client = GameData.client
 	# General UI stuff
+	GameData.randomDeploymentChanged.connect(_on_random_deployment_changed)
+	$RandomDeployment.toggled.connect(_on_random_deployment_pressed)
 	$Back.pressed.connect(_on_back_button_pressed)
 	$Start.pressed.connect(_on_start_button_pressed)
 	var player: GameData.Player = GameData.players[GameData.localPlayerIndex]
@@ -46,8 +48,11 @@ func _ready():
 
 func on_color_button_pressed(color: Color):
 	_client._send_dict({
-		"message_type": "color_selected",
-		"data": color.to_rgba32() 
+		"message_type": "lobby_updated", # used to be "color_selected"
+		"data": {
+			"color": color.to_rgba32(),
+			"random_deployment": GameData.randomDeployment
+		}
 	})
 
 func connect_after_timeout(timeout: float):
@@ -74,11 +79,12 @@ func client_rec_data(data: String):
 			GameData.localPlayerIndex = 0
 			for child in $GameInfo/Players.get_children():
 				child.queue_free()
-			
+
 			for obj in json_obj["data"]:
 				var newPlayer = GameData.Player.new(obj["id"], obj["name"], Color.hex(obj["color"]))
 				GameData.players.append(newPlayer)
 			GameData.localPlayerIndex = json_obj["index"]
+			GameData.randomDeployment = json_obj["random_deployment"]
 			print("GameData.players: ", GameData.players)
 			# Update the UI
 			var localPlayer = GameData.players[GameData.localPlayerIndex]
@@ -118,8 +124,31 @@ func client_rec_data(data: String):
 				index += 1
 			print("Starting game: %s", GameData.players_to_string())
 			get_tree().change_scene_to_file("res://Scenes/game.tscn")
+		"start_game_rand":
+			GameData.turnPlayerIndex = json_obj["turn"]
+			# Update province owners and add one soldier
+			var prov_owners = json_obj["prov_owners"]
+			var index = 0
+			for province in GameData.provinces:
+				province.updateInfo(prov_owners[index], 1, 0)
+				index += 1
+			print("Starting game: %s", GameData.players_to_string())
+			get_tree().change_scene_to_file("res://Scenes/game.tscn")
 		_:
 			print("Received unknown(%s)" % [json_obj["message_type"]])
+
+func _on_random_deployment_changed():
+	print("CHANGED!")
+	$RandomDeployment.button_pressed = GameData.randomDeployment
+
+func _on_random_deployment_pressed(newVal: bool):
+	GameData.randomDeployment = newVal
+	_client._send_dict({"message_type": "lobby_updated", # used to be "color_selected"
+		"data": {
+			"color": GameData.players[GameData.localPlayerIndex]._color.to_rgba32(),
+			"random_deployment": GameData.randomDeployment
+		}
+		})
 
 func _on_start_button_pressed():
 	_client._send_dict({

@@ -4,10 +4,15 @@ var client: GameData.Client = GameData.client
 
 func _ready():
 	# Reset the GameData
-	for province in GameData.provinces:
-		province._owner = -1
-		province._soldiers = 0
-		province._to_add = 0
+	if GameData.randomDeployment != true:
+		for province in GameData.provinces:
+			province._owner = -1
+			province._soldiers = 0
+			province._to_add = 0
+	else:
+		for province in GameData.provinces:
+			print(province._to_string())
+			province.updateInfo(province._owner, 1, 0)
 	
 	# Connect functions
 	client.connected.connect(client_connected)

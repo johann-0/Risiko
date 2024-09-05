@@ -102,3 +102,12 @@ offset_top = 113.0
 offset_right = 1033.0
 offset_bottom = 232.0
 scale = Vector2(4, 4)
+
+[node name="RandomDeployment" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 165.0
+offset_right = 279.0
+offset_bottom = 207.0
+theme_override_font_sizes/font_size = 24
+text = "Random deployment"

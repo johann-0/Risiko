@@ -5,6 +5,7 @@ signal newTurnPlayerIndex(oldIndex: int, newIndex: int) # DEBUG: need to add pha
 signal newPhase(oldPhase: Phase, newPhase: Phase)
 signal newGameSelectedProvince(oldProvID: int, newProvID: int)
 signal soldierDeployed(provID: int)
+signal randomDeploymentChanged()
 
 const SEL_COLOR: Color = Color8(0, 255, 0, 100)
 const NEIGH_COLOR: Color = Color8(0, 255, 0, 50)
@@ -13,6 +14,10 @@ const GAME_SEL_COLOR: Color = Color8(255, 0, 0, 100)
 var NUM_PROV: int = 0
 var provinces: Array = []
 var players: Array = []
+var randomDeployment = false:
+	set(newVal):
+		randomDeployment = newVal
+		randomDeploymentChanged.emit()
 
 var gameSelectedProvID: int = Province.WASTELAND_ID:
 	set(newProvID):

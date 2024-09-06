@@ -16,19 +16,21 @@ func _ready():
 		index += 1
 	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
 	
-	newTurn((GameData.turnPlayerIndex + 1) % GameData.players.size(), GameData.turnPlayerIndex)
+	on_new_turn((GameData.turnPlayerIndex + 1) % GameData.players.size(), GameData.turnPlayerIndex)
 
 func _on_prov_info_updated(provID: int):
 	# Update the available troops
 	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
 
-func newTurn(oldTurnPlayerIndex: int, newTurnPlayerIndex: int):
-	if oldTurnPlayerIndex != -1:
-		$Screen/Players.get_child(oldTurnPlayerIndex).setBackgroundColor(Color.BLACK)
-	if newTurnPlayerIndex != -1:
-		$Screen/Players.get_child(newTurnPlayerIndex).setBackgroundColor(Color.GREEN)
+# Called by parent
+func on_new_turn(oldIndex, newIndex, indexChanged = false \
+	, oldPhase = GameData.Phase.lobby, newPhase = GameData.Phase.lobby, phaseChanged = false): 
+	if oldIndex != -1:
+		$Screen/Players.get_child(oldIndex).setBackgroundColor(Color.BLACK)
+	if newIndex != -1:
+		$Screen/Players.get_child(newIndex).setBackgroundColor(Color.GREEN)
 	
-	if newTurnPlayerIndex == GameData.localPlayerIndex:
+	if newIndex == GameData.localPlayerIndex:
 		$Screen/EndTurn.show()
 	else:
 		$Screen/EndTurn.hide()

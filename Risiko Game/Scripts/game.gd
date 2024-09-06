@@ -3,44 +3,62 @@ extends Node2D
 var client: GameData.Client = GameData.client
 
 func _ready():
-	# Reset the GameData
-	if GameData.randomDeployment != true:
-		for province in GameData.provinces:
-			province._owner = -1
-			province._soldiers = 0
-			province._to_add = 0
-	else:
-		for province in GameData.provinces:
-			print(province._to_string())
-			province.updateInfo(province._owner, 1, 0)
-	
 	# Connect functions
 	client.connected.connect(client_connected)
 	client.disconnected.connect(client_disconnected)
 	client.received_data.connect(client_rec_data)
 	client.connecting.connect(client_connecting)
-	GameData.newTurnPlayerIndex.connect(on_new_turn)
+	GameData.newTurn.connect(on_new_turn)
 	$Control/Screen/EndTurn.pressed.connect(_on_end_turn_clicked)
 	
+	# (Re)Set the GameData
+	var player_index = GameData.turnPlayerIndex
+	GameData.turnPlayerIndex = -1
+	if GameData.randomDeployment == true:
+		# Update the provinces
+		for prov in GameData.provinces:
+			print(prov._to_string())
+			prov.infoUpdated.emit(prov._id)
+		GameData.setNewTurn(player_index, GameData.Phase.deploy)
+	else:
+		GameData.setNewTurn(player_index, GameData.Phase.init_deploy)
+	
+	
 	# First turn has started
-	GameData.turnPlayerIndex = GameData.turnPlayerIndex
+	
+	# DEBUG
+	print("STARTING DEBUG STUFF")
+	for i in range(GameData.NUM_PROV - 1):
+		GameData.selectedProvID = i
+		await get_tree().create_timer(0.3).timeout
+		GameData.provinces[i].addDeploy(0)
+		await get_tree().create_timer(0.3).timeout
+		_on_end_turn_clicked()
+		await get_tree().create_timer(0.3).timeout
+		GameData.turnPlayerIndex = 0
+		await get_tree().create_timer(0.3).timeout
 
-func on_new_turn(oldPlayerIndex: int, newPlayerIndex: int):
-	print("new turn")
-	match GameData.gamePhase:
-		GameData.Phase.INIT_DEPLOY:
+func on_new_turn(oldIndex: int, newIndex: int, indexChanged: bool\
+				, oldPhase: GameData.Phase, newPhase: GameData.Phase, phaseChanged: bool):
+	match newPhase:
+		GameData.Phase.init_deploy:
 			for province in GameData.provinces:
 				province.commitDeployment()
-			if GameData.players[newPlayerIndex]._soldiers > 0:
-				GameData.players[newPlayerIndex]._soldiers -= 1
-				GameData.turnAvailSoldiers = 1
-				$Control.newTurn(oldPlayerIndex, newPlayerIndex)
+			GameData.turnAvailSoldiers = 1
+		GameData.Phase.deploy:
+			for province in GameData.provinces:
+				province.commitDeployment()
+		GameData.Phase.attack:
+			pass
+		_:
+			pass
+	$Control.on_new_turn(oldIndex, newIndex, indexChanged, oldPhase, newPhase, phaseChanged)
 
 func _unhandled_input(event):
 	if GameData.localPlayerIndex == GameData.turnPlayerIndex \
 	  and GameData.selectedProvID != GameData.Province.WASTELAND_ID \
-	  and (GameData.gamePhase == GameData.Phase.INIT_DEPLOY \
-	  or GameData.gamePhase == GameData.Phase.DEPLOY):
+	  and (GameData.gamePhase == GameData.Phase.init_deploy \
+	  or GameData.gamePhase == GameData.Phase.deploy):
 		if event.is_action_pressed("up") \
 		  and GameData.turnAvailSoldiers != 0:
 			GameData.provinces[GameData.selectedProvID].addDeploy(GameData.localPlayerIndex)
@@ -52,7 +70,7 @@ func _unhandled_input(event):
 		GameData.selectedProvID = GameData.Province.WASTELAND_ID
 
 func _process(_delta):
-	pass#print(GameData.players[0]._soldiers)
+	pass
 
 func client_connected():
 	pass
@@ -77,7 +95,7 @@ func client_rec_data(data_str: String):
 				prov.updateInfo(prov_["owner"], prov_["soldiers"], prov_["to_add"])
 			print("Prov updated: " + str(GameData.provinces[data["prov"]["id"]]))
 		"end_turn":
-			GameData.turnPlayerIndex = data["new_prov_id"]
+			GameData.setNewTurn(data["new_player_id"], GameData.Phase.get(data["phase"]))
 			GameData.turnAvailSoldiers = data["avail_soldiers"]
 			if GameData.turnPlayerIndex == GameData.localPlayerIndex:
 				GameData.selectedProvID = GameData.selectedProvID
@@ -85,8 +103,12 @@ func client_rec_data(data_str: String):
 			print("")
 
 func _on_end_turn_clicked():
-	print("End turn button clicked!")
 	# Make sure player is allowed to end their turn
-	if GameData.turnAvailSoldiers != 0:
-		return
+	match GameData.gamePhase:
+		GameData.Phase.deploy:
+			if GameData.turnAvailSoldiers != 0: return
+		GameData.Phase.init_deploy:
+			if GameData.turnAvailSoldiers != 0: return
+		_:
+			pass
 	client._send_dict({"message_type": "end_turn"})

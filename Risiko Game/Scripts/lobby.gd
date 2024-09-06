@@ -118,27 +118,23 @@ func client_rec_data(data: String):
 						pass
 		"start_game":
 			GameData.turnPlayerIndex = json_obj["turn"]
-			var index: int = 0
-			for player in GameData.players:
-				player._soldiers = json_obj["soldiers"][index]
-				index += 1
 			print("Starting game: %s", GameData.players_to_string())
 			get_tree().change_scene_to_file("res://Scenes/game.tscn")
 		"start_game_rand":
 			GameData.turnPlayerIndex = json_obj["turn"]
-			# Update province owners and add one soldier
+			# Update province owners
 			var prov_owners = json_obj["prov_owners"]
 			var index = 0
 			for province in GameData.provinces:
-				province.updateInfo(prov_owners[index], 1, 0)
+				province._owner = prov_owners[index]
+				province._soldiers = 1
 				index += 1
-			print("Starting game: %s", GameData.players_to_string())
+			print("Starting game_rand: %s", GameData.players_to_string())
 			get_tree().change_scene_to_file("res://Scenes/game.tscn")
 		_:
 			print("Received unknown(%s)" % [json_obj["message_type"]])
 
 func _on_random_deployment_changed():
-	print("CHANGED!")
 	$RandomDeployment.button_pressed = GameData.randomDeployment
 
 func _on_random_deployment_pressed(newVal: bool):

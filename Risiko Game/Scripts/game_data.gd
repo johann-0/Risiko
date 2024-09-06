@@ -1,8 +1,8 @@
 extends Node2D
 
 signal _prov_clicked(oldProvID: int, newProvID: int)
-signal newTurnPlayerIndex(oldIndex: int, newIndex: int) # DEBUG: need to add phase to this somehow
-signal newPhase(oldPhase: Phase, newPhase: Phase)
+signal newTurn(oldIndex: int, newIndex: int, indexChanged: bool, \
+			   oldPhase: Phase, newPhase: Phase, phaseChanged: bool)
 signal newGameSelectedProvince(oldProvID: int, newProvID: int)
 signal soldierDeployed(provID: int)
 signal randomDeploymentChanged()
@@ -24,6 +24,7 @@ var gameSelectedProvID: int = Province.WASTELAND_ID:
 		var oldProvID = gameSelectedProvID
 		gameSelectedProvID = newProvID
 		newGameSelectedProvince.emit(oldProvID, newProvID)
+var gameAttackedProvID: int = Province.WASTELAND_ID
 var selectedProvID: int = Province.WASTELAND_ID:
 	set(newProvID):
 		var oldProvID = selectedProvID
@@ -34,16 +35,12 @@ var selectedProvID: int = Province.WASTELAND_ID:
 				"message_type": "prov_selected",
 				"data": { "oldProvID": oldProvID, "newProvID": newProvID},
 				})
-			#gameSelectedProvID = newProvID # This line leads to bugs
-var turnPlayerIndex: int = -1:
-	set(newIndex):
-		var oldIndex = turnPlayerIndex
-		turnPlayerIndex = newIndex
-		print("NEW PLAYER'S TURN! " + str(oldIndex) + " " + str(newIndex))
-		newTurnPlayerIndex.emit(oldIndex, newIndex)
-var gamePhase: Phase = Phase.INIT_DEPLOY
+var turnPlayerIndex: int = -1
+var gamePhase: Phase = Phase.lobby
 var localPlayerIndex: int = 0
-var turnAvailSoldiers: int = 0
+var turnAvailSoldiers: int = 0:
+	set(newVal):
+		turnAvailSoldiers = newVal
 
 const Client = preload("res://Scripts/WS_client.gd")
 @onready var client: Client
@@ -61,15 +58,14 @@ class ServerName:
 
 var serverName: ServerName = ServerName.DEFAULT_SERVER_NAME()
 
-enum Phase { INIT_DEPLOY, DEPLOY, ATTACK, FORTIFY}
+enum Phase { lobby, init_deploy, deploy, attack, fortify}
 
 class Player:
 	var _id: int
 	var _name: String
 	var _color: Color
-	var _soldiers: int
-	func _init(id: int, name: String, color: Color = Color.AZURE, soldiers: int = 0):
-		_id = id; _name = name; _color = color; _soldiers = soldiers
+	func _init(id: int, name: String, color: Color = Color.AZURE):
+		_id = id; _name = name; _color = color;
 	static func DEFAULT_PLAYER():
 		return Player.new(0, "Player_" + str(randi()%64))
 	func equals(otherPlayer: Player):
@@ -84,17 +80,13 @@ class Player:
 	func _to_string():
 		return JSON.stringify(_to_JSON())
 	func _to_JSON():
-		return { "id": _id, "name": _name, "color": _color.to_html(), "soldiers": _soldiers }
+		return { "id": _id, "name": _name, "color": _color.to_html() }
 
 class Province:
 	signal infoUpdated(provID: int)
-	var _id: int
-	var _name: String
-	var _neighbors: Array
-	var _center: Vector2
-	var _owner: int
-	var _soldiers: int
-	var _to_add: int = 0
+	var _id: int; var _name: String; var _owner: int
+	var _neighbors: Array; var _center: Vector2
+	var _soldiers: int;	var _to_add: int = 0
 	func updateInfo(pOwner: int, pSoldiers: int, pToAdd: int):
 		if pOwner == -1 or (pSoldiers + pToAdd) == 0: # If province is empty
 			_owner = -1
@@ -104,7 +96,6 @@ class Province:
 			_owner = pOwner
 			_soldiers = pSoldiers
 			_to_add = pToAdd
-		print("Prov updated: "+_to_string())
 		infoUpdated.emit(_id)
 	func addDeploy(pOwner: int):
 		GameData.turnAvailSoldiers -= 1
@@ -119,6 +110,7 @@ class Province:
 			"message_type": "prov_updated",
 			"data": {"prov": _to_JSON(), "avail_soldiers": GameData.turnAvailSoldiers}})
 	func commitDeployment():
+		if _to_add == 0: return
 		updateInfo(_owner, _soldiers + _to_add, 0)
 	func _init(id: int, name: String, neighbors: Array, soldiers: int, center: Vector2, owner: int = -1):
 		_id = id; _name = name; _neighbors = neighbors; _soldiers = soldiers
@@ -129,15 +121,29 @@ class Province:
 		return JSON.stringify(_to_JSON())
 	static var WASTELAND_ID: int = -1
 	static func WASTELAND():
-		var wasteland = Province.new(WASTELAND_ID, "Wasteland", [], 0, Vector2(0,0))
-		return wasteland
+		return Province.new(WASTELAND_ID, "Wasteland", [], 0, Vector2(0,0))
 
 func _ready():
 	players.append(Player.DEFAULT_PLAYER())
 	get_provinces_from_json()
-	
 	client = Client.new()
 	add_child(client)
+
+func setNewTurn(newIndex: int, newPhase: Phase):
+	#if newIndex != turnPlayerIndex or newPhase != gamePhase:
+		var oldIndex = turnPlayerIndex
+		var oldPhase = gamePhase
+		var phaseChanged = false
+		var indexChanged = false
+		turnPlayerIndex = newIndex
+		gamePhase = newPhase
+		if newIndex != oldIndex:
+			indexChanged = true
+			print("NEW PLAYER'S TURN! " + str(oldIndex) + "->" + str(newIndex))
+		if newPhase != oldPhase:
+			phaseChanged = true
+			print("NEW PHASE! " + str(oldPhase) + "->" + str(newPhase))
+		newTurn.emit(oldIndex, newIndex, indexChanged, oldPhase, newPhase, phaseChanged)
 
 func get_provinces_from_json():
 	var file = FileAccess.open("res://Assets/provinces.json", FileAccess.READ)

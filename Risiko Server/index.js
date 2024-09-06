@@ -57,11 +57,11 @@ function shuffle_arr(array) {
       array[randomIndex], array[currentIndex]];
   }
 }
-let distributeProvinces = function (soldiers) {
+let distributeProvinces = function (provs_per_player) {
   // Array shows each provinces owners (initially no owner = -1)
   let prov_owners = [];
-  soldiers.forEach((soldier_amount, idx)=>{
-    prov_owners = prov_owners.concat(Array.from({length: soldier_amount}, ()=>idx))
+  provs_per_player.forEach((n_provs, owner_idx)=>{
+    prov_owners = prov_owners.concat(Array.from({length: n_provs}, ()=>owner_idx))
   });
   shuffle_arr(prov_owners);
   game_state["provinces"].forEach((province, index)=>{
@@ -147,7 +147,7 @@ let sendProvUpdated = function(provID, avail_soldiers) {
     index += 1;
   });
 }
-let sendEndTurn = function(newProvID) {
+let sendEndTurn = function(newPlayerID) {
   let index = 0;
   wss.clients.forEach((ws)=>{
     let avail_soldiers = 0
@@ -157,16 +157,17 @@ let sendEndTurn = function(newProvID) {
         break;
       case "deploy":
         // Calculate how many soldiers a player has
+        avail_soldiers = calculateSoldiers(index);
       default: break;
     }
-    let toSend_json = {"message_type": "end_turn", "data": {"new_prov_id": newProvID, "avail_soldiers": avail_soldiers}};
+    let toSend_json = {"message_type": "end_turn", "data": {"new_player_id": newPlayerID, "avail_soldiers": avail_soldiers, "phase": game_state["cur_phase"]}};
     console.log("SENDING: " + JSON.stringify(toSend_json));
     ws.send(JSON.stringify(toSend_json));
+    index += 1;
   });
 }
 
 wss.on('connection', function connection(ws) {
-  console.log("Shitsicles")
   // Basically console.log but with the socket's id
   let print;
   { var log = console.log;
@@ -240,34 +241,32 @@ wss.on('connection', function connection(ws) {
           }
         });
         sendPlayersData();
-        // Distribute soldiers among the players
-        let soldiers = [];
-        let remainingSoldiers = NUM_OF_PROV % players.length;
-        for (let i = 0; i < players.length; i++) {
-          let toAdd = parseInt(NUM_OF_PROV/players.length);
-          if(remainingSoldiers > 0)
-            toAdd += 1;
-          soldiers.push(toAdd);      
-        }
-        toLog += ". Soldiers: " + soldiers
         // Send start_game message to everyone, tell them who starts
         let toSend_json = {};
         if (game_state["random_deployment"] == false) {
           toSend_json = {
             "message_type": "start_game",
             "turn": game_state["cur_turn"], // The index of the player whose turn it is
-            "soldiers": soldiers
           };
         } else {
           // Distribute the provinces
-          
+          // Calculate the provinces per player
+          let provs = [];
+          let remainingProvs = NUM_OF_PROV % players.length;
+          for (let i = 0; i < players.length; i++) {
+            let toAdd = parseInt(NUM_OF_PROV/players.length);
+            if(remainingProvs > 0)
+              toAdd += 1;
+            provs.push(toAdd);      
+          }
           toSend_json = {
             "message_type": "start_game_rand",
             "turn": game_state["cur_turn"],
-            "prov_owners": distributeProvinces(soldiers) // TODO (current working area)
+            "prov_owners": distributeProvinces(provs) // TODO (current working area)
           }
         }
         wss.clients.forEach((_ws)=>{_ws.send(JSON.stringify(toSend_json));});
+        console.log("SENDING: " + JSON.stringify(toSend_json));
         break;
       
       // When a player selects a new color or toggles random deployment
@@ -294,20 +293,40 @@ wss.on('connection', function connection(ws) {
         prov_info.owner = prov_["owner"];
         prov_info.soldiers = prov_["soldiers"];
         prov_info.to_add = prov_["to_add"];
-        let avail_soldiers = data["avail_soldiers"]
-        toLog += "province: " + prov_info.toString()
+        let avail_soldiers = data["avail_soldiers"];
+        toLog += "province: " + prov_info.toString();
         sendProvUpdated(prov_info.id, avail_soldiers);
         break;
       
       // When new turn
       case "end_turn":
-        let oldProvID = game_state["cur_turn"];
-        toLog += "oldProv: " + oldProvID + ".";
-        let newProvID = (oldProvID + 1) % players.length;
-        game_state["cur_turn"] = newProvID;
-        toLog += "newProv: " + newProvID;
-        sendEndTurn(newProvID);
+        let oldPlayerID = game_state["cur_turn"];
+        let newPlayerID = (oldPlayerID + 1) % players.length;
+        game_state["cur_turn"] = newPlayerID;
+        toLog += "player_turn: " + oldPlayerID + " -> " + newPlayerID + ". ";
+        switch (game_state["cur_phase"]) {
+          case "deploy":
+            sendEndTurn(newPlayerID)
+            break;
+          case "init_deploy":
+            // Check if all provinces have been taken
+            let allTaken = true;
+            game_state["provinces"].forEach((province)=>{ if(province.owner == -1) allTaken = false; });
+            if (allTaken == false) {
+              sendEndTurn(newPlayerID);
+            } else {
+              toLog += "all provinces are owned. ";
+              // Move the game to the next phase (deploying)
+              game_state["cur_phase"] = "deploy";
+              sendEndTurn(newPlayerID);
+            };
+            break;
+          default:
+            print("Unknown game_phase (on end_turn)")
+            break;
+        }
         break;
+      
       // DEFAULT
       default:
         toLog += "unknown(" + msg_type + ")";
@@ -339,7 +358,7 @@ wss.on('connection', function connection(ws) {
         break;
       default:
         // Disconnect everyone and reset the lobby?
-        console.log("Connection closed (" + ws.id + "). Resetting server.");
+        print("Connection closed (" + ws.id + "). Resetting server.");
         resetServer();
         break;
     }

@@ -11,7 +11,7 @@ func _ready():
 	# Connect to signals
 	GameData._prov_clicked.connect(_on_prov_clicked)
 	GameData.newGameSelectedProvince.connect(_on_new_map_prov)
-	GameData.newTurnPlayerIndex.connect(_on_new_turn)
+	GameData.newTurn.connect(_on_new_turn)
 	for province in GameData.provinces:
 		province.infoUpdated.connect(_on_info_updated)
 	
@@ -36,7 +36,7 @@ func _ready():
 	# Load stuff onto provinces
 	for prov in GameData.provinces:
 		if prov._center == Vector2(-1,-1):
-			print("Province is a WIP")
+			printerr("Province is a WIP")
 			continue
 		var newSold: Soldier_UI = Soldier_UI.new_soldier(prov._id, true)
 		#newSold.visibility_layer = 1 # IDK why this is here...
@@ -74,7 +74,7 @@ func _on_info_updated(provID: int): # Update the political map
 		set_mask_color(provID, Color.TRANSPARENT, 2) # 2=Political
 	else:
 		var color: Color = GameData.players[_owner]._color
-		color = color.darkened(0.5)
+		color = color.lightened(0.5)
 		set_mask_color(provID, color, 2) # 2=Political
 	apply_mask()
 
@@ -91,9 +91,9 @@ func _on_new_map_prov(oldProvID: int, newProvID: int):
 		set_mask_color(newProvID, GameData.GAME_SEL_COLOR, 0) # 0=Global
 		apply_mask()
 
-func _on_new_turn(oldID: int, newID: int):
-	print("resetting mask") # DEBUG
+func _on_new_turn(_oldIdx,_newIdx,_idxChgd,_oldPhase,_newPhase,_phaseChanged):
 	# Reset the global mask
+	#if _idxChgd: # TODO check if this check changed anything
 	reset_mask(0) # 0=Global
 	apply_mask()
 

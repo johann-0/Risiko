@@ -7,10 +7,13 @@ extends Node2D
 
 signal map_prov_clicked(provID: int)
 
+# enum Mask {Global = 0, Local = 1, Political = 2} # DEBUG maybe implement this, not necessary though
+
 func _ready():
 	# Connect to signals
 	GameData._prov_clicked.connect(_on_prov_clicked)
 	GameData.newGameSelectedProvince.connect(_on_new_map_prov)
+	GameData.newGameAttackedProvince.connect(_on_new_attack_prov)
 	GameData.newTurn.connect(_on_new_turn)
 	for province in GameData.provinces:
 		province.infoUpdated.connect(_on_info_updated)
@@ -74,7 +77,7 @@ func _on_info_updated(provID: int): # Update the political map
 		set_mask_color(provID, Color.TRANSPARENT, 2) # 2=Political
 	else:
 		var color: Color = GameData.players[_owner]._color
-		color = color.lightened(0.5)
+		color = color.darkened(0.4) # 0.2 means 20% darker
 		set_mask_color(provID, color, 2) # 2=Political
 	apply_mask()
 
@@ -91,10 +94,35 @@ func _on_new_map_prov(oldProvID: int, newProvID: int):
 		set_mask_color(newProvID, GameData.GAME_SEL_COLOR, 0) # 0=Global
 		apply_mask()
 
-func _on_new_turn(_oldIdx,_newIdx,_idxChgd,_oldPhase,_newPhase,_phaseChanged):
+func _on_new_attack_prov(oldProvID: int, newProvID: int):
+	if oldProvID == newProvID:
+		return
+	#print("on_new_attack_prov") # DEBUG
+	# Color out any previous attacked province
+	if oldProvID != GameData.Province.WASTELAND_ID:
+		#print("coloring out") # DEBUG
+		set_mask_color(oldProvID, Color.TRANSPARENT, 0) # 0=Global
+		apply_mask()
+	# Color in the new attacked province
+	if newProvID != GameData.Province.WASTELAND_ID:
+		#print("coloring in") # DEBUG
+		set_mask_color(newProvID, GameData.GAME_ATT_COLOR, 0) # 0=Global
+		apply_mask()
+
+func _on_new_turn(_oldIdx,_newIdx,_idxChgd,_oldPhase,_newPhase:GameData.Phase,_phaseChanged):
 	# Reset the global mask
-	#if _idxChgd: # TODO check if this check changed anything
-	reset_mask(0) # 0=Global
+	match _oldPhase:
+		GameData.Phase.init_deploy:
+			reset_mask(0) # 0=Global
+		GameData.Phase.deploy:
+			pass#set_mask_color(GameData.gameSelectedProvID, Color.TRANSPARENT, 0) # 0=Global
+		GameData.Phase.attack:
+			set_mask_color(GameData.gameAttackedProvID, Color.TRANSPARENT, 0) # 0=Global
+		GameData.Phase.fortify:
+			set_mask_color(GameData.gameAttackedProvID, Color.TRANSPARENT, 0) # 0=Global
+		_:
+			pass
+	
 	apply_mask()
 
 func _on_prov_clicked(oldProvID: int, newProvID: int):

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dyeld0jqcr1i0"]
+[gd_scene load_steps=26 format=3 uid="uid://dyeld0jqcr1i0"]
 
 [ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
 [ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
@@ -6,11 +6,50 @@
 [ext_resource type="Script" path="res://Scripts/banner_ignore_input.gd" id="3_n6hxg"]
 [ext_resource type="Texture2D" uid="uid://baa3pox2i0av3" path="res://Assets/ui/soldier_icon.png" id="5_mi587"]
 [ext_resource type="Texture2D" uid="uid://bt6d1qg77dhin" path="res://Assets/ui/top_tab.png" id="5_p3up7"]
+[ext_resource type="Texture2D" uid="uid://b3gd7vu2qunso" path="res://Assets/ui/to_add.png" id="6_mewqr"]
 [ext_resource type="Texture2D" uid="uid://cvygsk8hd8rdn" path="res://Assets/ui/turn_icon.png" id="6_ocdlk"]
 [ext_resource type="Texture2D" uid="uid://bkg7g7dr52yaf" path="res://Assets/ui/avail_troops.png" id="7_y08sn"]
 [ext_resource type="Texture2D" uid="uid://cs2qyihny370t" path="res://Assets/ui/end_turn_normal.png" id="8_1ervx"]
+[ext_resource type="Texture2D" uid="uid://dqi1ovcuw2f8s" path="res://Assets/ui/top_tab_right.png" id="9_3vjmb"]
 [ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="9_k1qyu"]
 [ext_resource type="Texture2D" uid="uid://crpsesa5xfieq" path="res://Assets/ui/end_turn_pressed.png" id="10_vhepq"]
+[ext_resource type="Script" path="res://Scripts/Dice.gd" id="13_p0flr"]
+[ext_resource type="PackedScene" uid="uid://bx7wjah5818y2" path="res://Scenes/die.tscn" id="14_x7tht"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ewk1o"]
+load_path = "res://.godot/imported/dice-Sheet.png-4c6b07609c1518b2caa5e6d98ced2dbf.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ppynv"]
+atlas = SubResource("CompressedTexture2D_ewk1o")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_luipk"]
+load_path = "res://.godot/imported/dice-Sheet.png-4c6b07609c1518b2caa5e6d98ced2dbf.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tjdjh"]
+atlas = SubResource("CompressedTexture2D_luipk")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rsrvu"]
+load_path = "res://.godot/imported/dice-Sheet.png-4c6b07609c1518b2caa5e6d98ced2dbf.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wbmjo"]
+atlas = SubResource("CompressedTexture2D_rsrvu")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cbn8a"]
+load_path = "res://.godot/imported/dice-Sheet.png-4c6b07609c1518b2caa5e6d98ced2dbf.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_46lq6"]
+atlas = SubResource("CompressedTexture2D_cbn8a")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_s8jtf"]
+load_path = "res://.godot/imported/dice-Sheet.png-4c6b07609c1518b2caa5e6d98ced2dbf.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_682wu"]
+atlas = SubResource("CompressedTexture2D_s8jtf")
+region = Rect2(0, 0, 8, 8)
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_kh6vk")
@@ -35,8 +74,8 @@ script = ExtResource("3_n6hxg")
 layout_mode = 1
 offset_left = 37.0
 offset_top = 3.0
-offset_right = 37.0
-offset_bottom = 3.0
+offset_right = -227.0
+offset_bottom = -3.0
 mouse_filter = 1
 
 [node name="Icon" parent="Screen/LowerBanner/NameStat" index="0"]
@@ -49,8 +88,8 @@ mouse_filter = 0
 layout_mode = 1
 offset_left = 135.0
 offset_top = 3.0
-offset_right = 135.0
-offset_bottom = 3.0
+offset_right = -129.0
+offset_bottom = -3.0
 mouse_filter = 1
 
 [node name="Icon" parent="Screen/LowerBanner/SoldiersStat" index="0"]
@@ -59,6 +98,19 @@ texture = ExtResource("5_mi587")
 
 [node name="Value" parent="Screen/LowerBanner/SoldiersStat" index="1"]
 mouse_filter = 0
+
+[node name="ToAddTroops" parent="Screen/LowerBanner" instance=ExtResource("3_36gpu")]
+layout_mode = 1
+offset_left = 166.0
+offset_top = 3.0
+offset_right = -90.0
+offset_bottom = -3.0
+
+[node name="Icon" parent="Screen/LowerBanner/ToAddTroops" index="0"]
+texture = ExtResource("6_mewqr")
+
+[node name="Value" parent="Screen/LowerBanner/ToAddTroops" index="1"]
+theme_override_colors/font_color = Color(0, 1, 0, 1)
 
 [node name="UpperBanner" type="TextureRect" parent="Screen"]
 layout_mode = 0
@@ -69,30 +121,40 @@ script = ExtResource("3_n6hxg")
 
 [node name="TurnStat" parent="Screen/UpperBanner" instance=ExtResource("3_36gpu")]
 layout_mode = 1
-offset_left = 77.0
+offset_left = 2.0
 offset_top = 2.0
-offset_right = -169.0
-offset_bottom = 0.0
+offset_right = -234.0
+offset_bottom = -2.0
 mouse_filter = 1
 
 [node name="Icon" parent="Screen/UpperBanner/TurnStat" index="0"]
 texture = ExtResource("6_ocdlk")
 
 [node name="Value" parent="Screen/UpperBanner/TurnStat" index="1"]
-text = ": Deploy"
+text = ": init_deploy"
 
 [node name="AvailTroops" parent="Screen/UpperBanner" instance=ExtResource("3_36gpu")]
 layout_mode = 1
-offset_left = 128.0
+offset_left = 171.0
 offset_top = 2.0
-offset_right = -138.0
+offset_right = -95.0
 offset_bottom = -2.0
 mouse_filter = 1
 
-[node name="Icon" parent="Screen/UpperBanner/AvailTroops" index="0"]
+[node name="TextureRect" type="TextureRect" parent="Screen/UpperBanner/AvailTroops"]
+layout_mode = 0
+offset_left = -24.0
+offset_top = -2.0
+offset_right = 44.0
+offset_bottom = 12.0
+texture = ExtResource("9_3vjmb")
+stretch_mode = 2
+
+[node name="Icon" parent="Screen/UpperBanner/AvailTroops" index="1"]
 texture = ExtResource("7_y08sn")
 
-[node name="Value" parent="Screen/UpperBanner/AvailTroops" index="1"]
+[node name="Value" parent="Screen/UpperBanner/AvailTroops" index="2"]
+offset_right = 22.0
 text = ": 10"
 
 [node name="Players" type="Control" parent="Screen"]
@@ -121,7 +183,85 @@ mouse_filter = 1
 theme = ExtResource("9_k1qyu")
 text = "End Turn"
 
+[node name="Dice" type="Control" parent="Screen"]
+anchors_preset = 0
+offset_top = 79.0
+offset_right = 30.0
+offset_bottom = 100.0
+script = ExtResource("13_p0flr")
+
+[node name="Attack1" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
+modulate = Color(0.8, 1, 0.8, 1)
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 9.0
+offset_bottom = 9.0
+grow_horizontal = 1
+grow_vertical = 1
+texture = SubResource("AtlasTexture_ppynv")
+
+[node name="Attack2" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
+modulate = Color(0.8, 1, 0.8, 1)
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 11.0
+offset_top = 1.0
+offset_right = 19.0
+offset_bottom = 9.0
+grow_horizontal = 1
+grow_vertical = 1
+texture = SubResource("AtlasTexture_tjdjh")
+
+[node name="Attack3" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
+modulate = Color(0.8, 1, 0.8, 1)
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 21.0
+offset_top = 1.0
+offset_right = 29.0
+offset_bottom = 9.0
+grow_horizontal = 1
+grow_vertical = 1
+texture = SubResource("AtlasTexture_wbmjo")
+
+[node name="Defend1" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
+modulate = Color(1, 0.76, 0.76, 1)
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1.0
+offset_top = 12.0
+offset_right = 9.0
+offset_bottom = 20.0
+grow_horizontal = 1
+grow_vertical = 1
+texture = SubResource("AtlasTexture_46lq6")
+
+[node name="Defend2" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
+modulate = Color(1, 0.76, 0.76, 1)
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 11.0
+offset_top = 12.0
+offset_right = 19.0
+offset_bottom = 20.0
+grow_horizontal = 1
+grow_vertical = 1
+texture = SubResource("AtlasTexture_682wu")
+
 [editable path="Screen/LowerBanner/NameStat"]
 [editable path="Screen/LowerBanner/SoldiersStat"]
+[editable path="Screen/LowerBanner/ToAddTroops"]
 [editable path="Screen/UpperBanner/TurnStat"]
 [editable path="Screen/UpperBanner/AvailTroops"]

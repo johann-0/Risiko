@@ -45,6 +45,10 @@ func _ready():
 				"color": GameData.players[GameData.localPlayerIndex]._color.to_rgba32()
 			}
 		})
+	
+	if GameData.DEBUG_MODE == true:
+		await get_tree().create_timer(2.0).timeout
+		_on_random_deployment_pressed(true) # DEBUG
 
 func on_color_button_pressed(color: Color):
 	_client._send_dict({
@@ -121,9 +125,10 @@ func client_rec_data(data: String):
 			print("Starting game: %s", GameData.players_to_string())
 			get_tree().change_scene_to_file("res://Scenes/game.tscn")
 		"start_game_rand":
-			GameData.turnPlayerIndex = json_obj["turn"]
+			GameData.turnPlayerIndex = json_obj["data"]["turn"]
+			GameData.turnAvailSoldiers = json_obj["data"]["soldiers"]
 			# Update province owners
-			var prov_owners = json_obj["prov_owners"]
+			var prov_owners = json_obj["data"]["prov_owners"]
 			var index = 0
 			for province in GameData.provinces:
 				province._owner = prov_owners[index]

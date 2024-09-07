@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bx7wjah5818y2"]
+
+[ext_resource type="Texture2D" uid="uid://bacisiqevw3ua" path="res://Assets/ui/dice-Sheet.png" id="1_wovbn"]
+[ext_resource type="Script" path="res://Scripts/Die.gd" id="2_vgw45"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adwom"]
+atlas = ExtResource("1_wovbn")
+region = Rect2(0, 0, 8, 8)
+
+[node name="Die" type="TextureRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1144.0
+offset_bottom = -640.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_adwom")
+script = ExtResource("2_vgw45")

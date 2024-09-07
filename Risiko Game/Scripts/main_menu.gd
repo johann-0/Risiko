@@ -12,6 +12,10 @@ func _ready():
 	$PlayerName.text = defPlayer._name
 	$ServerAddress.text = defServerName._address
 	$ServerPort.text = str(defServerName._port)
+	
+	if GameData.DEBUG_MODE == true:
+		await get_tree().create_timer(0.3).timeout
+		_on_join_pressed()
 
 func _on_join_pressed():
 	if len($PlayerName.text) > 9:

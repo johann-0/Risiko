@@ -1,8 +1,8 @@
 extends Control
 
 func _ready():
-	$Join.connect("pressed", Callable(self, "_on_join_pressed"))
-	$Host.connect("pressed", Callable(self, "_on_host_pressed"))
+	$Join.pressed.connect(_on_join_pressed)
+	$Host.pressed.connect(_on_host_pressed)
 	
 	if GameData.DEBUG_MODE == true:
 		var defPlayer = GameData.Player.DEFAULT_PLAYER()

@@ -11,9 +11,12 @@ config_version=5
 [application]
 
 config/name="Risiko"
+config/description="Game based on Risk"
+config/version="Alpha 1.0"
 run/main_scene="res://Scenes/opener.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://Assets/ui/icon.png"
+config/windows_native_icon="res://Assets/ui/icon.ico"
 
 [autoload]
 

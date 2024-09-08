@@ -17,7 +17,6 @@ shader_parameter/colors = null
 script = ExtResource("2_wnghg")
 
 [node name="MouseMap" type="Sprite2D" parent="."]
-visible = false
 texture = ExtResource("1_prxjd")
 centered = false
 script = ExtResource("3_6kylv")

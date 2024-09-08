@@ -160,7 +160,7 @@ text = ": 10"
 [node name="Players" type="Control" parent="Screen"]
 anchors_preset = 0
 offset_top = 14.0
-offset_right = 65.0
+offset_right = 54.0
 offset_bottom = 70.0
 mouse_filter = 2
 

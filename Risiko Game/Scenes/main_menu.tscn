@@ -43,7 +43,7 @@ text = "Host"
 layout_mode = 0
 offset_left = 145.0
 offset_top = 21.0
-offset_right = 210.0
+offset_right = 212.0
 offset_bottom = 35.0
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
@@ -54,7 +54,7 @@ max_length = 9
 layout_mode = 0
 offset_left = 145.0
 offset_top = 51.0
-offset_right = 210.0
+offset_right = 212.0
 offset_bottom = 64.0
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
@@ -64,7 +64,7 @@ placeholder_text = "127:0:0:s"
 layout_mode = 0
 offset_left = 145.0
 offset_top = 81.0
-offset_right = 210.0
+offset_right = 212.0
 offset_bottom = 94.0
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
@@ -72,19 +72,19 @@ placeholder_text = "12345"
 
 [node name="EnterPlayerName" type="Label" parent="."]
 layout_mode = 0
-offset_left = 22.6667
-offset_top = 26.3333
-offset_right = 144.667
-offset_bottom = 40.3333
+offset_left = 25.3333
+offset_top = 29.6667
+offset_right = 143.333
+offset_bottom = 39.6667
 theme = ExtResource("2_8jt8f")
-text = "Enter player name (max 9 chars): "
+text = "Enter player name, max 9 chars: "
 
 [node name="EnterServerAddress" type="Label" parent="."]
 layout_mode = 0
-offset_left = 60.3333
-offset_top = 57.0
-offset_right = 140.333
-offset_bottom = 67.0
+offset_left = 60.0
+offset_top = 59.6667
+offset_right = 140.0
+offset_bottom = 69.6667
 theme = ExtResource("2_8jt8f")
 text = "Enter server address:"
 

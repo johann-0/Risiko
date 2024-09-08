@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Risiko"
-run/main_scene="res://Scenes/main_menu.tscn"
+run/main_scene="res://Scenes/opener.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -62,42 +62,6 @@ ui_up={
 "events": []
 }
 ui_down={
-"deadzone": 0.5,
-"events": []
-}
-ui_page_up={
-"deadzone": 0.5,
-"events": []
-}
-ui_page_down={
-"deadzone": 0.5,
-"events": []
-}
-ui_home={
-"deadzone": 0.5,
-"events": []
-}
-ui_end={
-"deadzone": 0.5,
-"events": []
-}
-ui_cut={
-"deadzone": 0.5,
-"events": []
-}
-ui_copy={
-"deadzone": 0.5,
-"events": []
-}
-ui_paste={
-"deadzone": 0.5,
-"events": []
-}
-ui_undo={
-"deadzone": 0.5,
-"events": []
-}
-ui_redo={
 "deadzone": 0.5,
 "events": []
 }

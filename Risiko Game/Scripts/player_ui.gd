@@ -10,11 +10,7 @@ func _process(_delta):
 static func new_player_UI(pPos: Vector2i, pId: int, pName: String, pColor: Color) -> Player_UI:
 	var my_scene: PackedScene = load("res://Scenes/player_ui.tscn")
 	var toReturn: Player_UI = my_scene.instantiate()
-	var text = ""
-	if pId < 10:
-		text += "0"
-	text += str(pId) + ": " + pName
-	toReturn.setText(text)
+	toReturn.setText(pName)
 	toReturn.setColor(pColor)
 	toReturn.position = pPos
 	return toReturn

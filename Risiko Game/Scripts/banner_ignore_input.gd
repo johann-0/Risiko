@@ -10,4 +10,3 @@ func _gui_input(event):
 	elif texture.get_image().get_pixel(mouse_pos.x, mouse_pos.y).a != 0:
 		# Handle the input
 		accept_event()
-		#print("Event handled")

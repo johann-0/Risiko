@@ -1,80 +1,98 @@
-[gd_scene load_steps=3 format=3 uid="uid://ddwvrhec0a60o"]
+[gd_scene load_steps=4 format=3 uid="uid://ddwvrhec0a60o"]
 
 [ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_5smud"]
+[ext_resource type="Texture2D" uid="uid://btukwlt6hshb" path="res://Assets/ui/white_background.png" id="2_5rr8p"]
 [ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="2_8jt8f"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+offset_right = 384.0
+offset_bottom = 216.0
+scale = Vector2(3, 3)
 script = ExtResource("1_5smud")
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(0.307329, 0.518448, 0.0792277, 1)
+layout_mode = 0
+offset_right = 384.0
+offset_bottom = 216.0
+texture = ExtResource("2_5rr8p")
 
 [node name="Join" type="Button" parent="."]
 layout_mode = 0
-offset_left = 537.0
-offset_top = 372.0
-offset_right = 581.0
-offset_bottom = 403.0
+offset_left = 222.0
+offset_top = 152.0
+offset_right = 260.0
+offset_bottom = 165.0
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
 text = "Join"
 
 [node name="Host" type="Button" parent="."]
 layout_mode = 0
-offset_left = 335.0
-offset_top = 374.0
-offset_right = 379.0
-offset_bottom = 405.0
+offset_left = 80.0
+offset_top = 152.0
+offset_right = 124.0
+offset_bottom = 164.0
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
 text = "Host"
 
 [node name="PlayerName" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 393.0
-offset_top = 24.0
-offset_right = 559.453
-offset_bottom = 69.005
+offset_left = 145.0
+offset_top = 21.0
+offset_right = 210.0
+offset_bottom = 35.0
 scale = Vector2(2, 2)
-text = "Jose"
+theme = ExtResource("2_8jt8f")
+placeholder_text = "Jeffrey"
+max_length = 9
 
 [node name="ServerAddress" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 394.0
-offset_top = 132.0
-offset_right = 560.453
-offset_bottom = 177.005
+offset_left = 145.0
+offset_top = 51.0
+offset_right = 210.0
+offset_bottom = 64.0
 scale = Vector2(2, 2)
-text = "BestServer.org"
+theme = ExtResource("2_8jt8f")
+placeholder_text = "127:0:0:s"
 
 [node name="ServerPort" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 392.0
-offset_top = 240.0
-offset_right = 558.453
-offset_bottom = 285.005
+offset_left = 145.0
+offset_top = 81.0
+offset_right = 210.0
+offset_bottom = 94.0
 scale = Vector2(2, 2)
-text = "12345"
+theme = ExtResource("2_8jt8f")
+placeholder_text = "12345"
 
 [node name="EnterPlayerName" type="Label" parent="."]
 layout_mode = 0
-offset_left = 104.0
-offset_top = 58.0
-offset_right = 362.0
-offset_bottom = 81.0
+offset_left = 22.6667
+offset_top = 26.3333
+offset_right = 144.667
+offset_bottom = 40.3333
+theme = ExtResource("2_8jt8f")
 text = "Enter player name (max 9 chars): "
 
 [node name="EnterServerAddress" type="Label" parent="."]
 layout_mode = 0
-offset_left = 199.0
-offset_top = 165.0
-offset_right = 363.0
-offset_bottom = 188.0
+offset_left = 60.3333
+offset_top = 57.0
+offset_right = 140.333
+offset_bottom = 67.0
+theme = ExtResource("2_8jt8f")
 text = "Enter server address:"
 
 [node name="EnterServerPort" type="Label" parent="."]
 layout_mode = 0
-offset_left = 215.0
-offset_top = 281.0
-offset_right = 379.0
-offset_bottom = 304.0
+offset_left = 71.3333
+offset_top = 87.3333
+offset_right = 139.333
+offset_bottom = 97.3333
+theme = ExtResource("2_8jt8f")
 text = "Enter server port:"

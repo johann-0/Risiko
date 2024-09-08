@@ -64,9 +64,11 @@ func on_new_turn(oldIndex, newIndex, indexChanged = false \
 	
 	if GameData.gamePhase == GameData.Phase.deploy or GameData.gamePhase == GameData.Phase.init_deploy:
 		$Screen/UpperBanner/AvailTroops.show()
+		$Screen/UpperBanner/AvailTroopsTexture.show()
 		$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
 	else:
 		$Screen/UpperBanner/AvailTroops.hide()
+		$Screen/UpperBanner/AvailTroopsTexture.hide()
 
 func _on_prov_clicked(_oldProvID: int, _newProvID: int):
 	var selProv: GameData.Province = GameData.get_selected_prov()

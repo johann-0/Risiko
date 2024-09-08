@@ -1,22 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://dddb3xveecq3o"]
+[gd_scene load_steps=4 format=3 uid="uid://dddb3xveecq3o"]
 
 [ext_resource type="Script" path="res://Scripts/lobby.gd" id="1_cet53"]
+[ext_resource type="Texture2D" uid="uid://btukwlt6hshb" path="res://Assets/ui/white_background.png" id="2_bwebs"]
 [ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="2_m6crb"]
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 384.0
+offset_bottom = 216.0
+scale = Vector2(3, 3)
 script = ExtResource("1_cet53")
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(0.307329, 0.518448, 0.0792277, 1)
+offset_right = 384.0
+offset_bottom = 216.0
+texture = ExtResource("2_bwebs")
 
 [node name="Back" type="Button" parent="."]
 layout_mode = 0
-offset_left = 32.0
-offset_top = 16.0
-offset_right = 78.0
-offset_bottom = 47.0
-scale = Vector2(2, 2)
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 15.0
 theme = ExtResource("2_m6crb")
 text = "Back"
 
@@ -29,40 +36,39 @@ offset_bottom = 47.0
 
 [node name="PlayerName" type="Label" parent="GameInfo"]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 62.0
-offset_right = 109.0
-offset_bottom = 85.0
+offset_left = -130.0
+offset_top = 10.0
+offset_right = -55.0
+offset_bottom = 20.0
+theme = ExtResource("2_m6crb")
 text = "Your name: "
 
 [node name="ServerName" type="Label" parent="GameInfo"]
 layout_mode = 0
-offset_left = 14.0
-offset_top = 29.0
-offset_right = 73.0
-offset_bottom = 52.0
+offset_left = -130.0
+offset_top = -2.0
+offset_right = -58.0
+offset_bottom = 8.0
+theme = ExtResource("2_m6crb")
 text = "Server: "
 
 [node name="Players" type="Label" parent="GameInfo"]
 layout_mode = 0
-offset_left = 19.0
-offset_top = 98.0
-offset_right = 59.0
-offset_bottom = 108.0
-scale = Vector2(4, 4)
+offset_left = -151.0
+offset_top = 27.0
+offset_right = -111.0
+offset_bottom = 37.0
 theme = ExtResource("2_m6crb")
 text = "Players: "
 
 [node name="Start" type="Button" parent="."]
 layout_mode = 0
-offset_left = 1019.0
-offset_top = 36.0
-offset_right = 1065.0
-offset_bottom = 67.0
-scale = Vector2(2, 2)
+offset_left = 348.0
+offset_top = 2.0
+offset_right = 382.0
+offset_bottom = 15.0
 theme = ExtResource("2_m6crb")
-text = "Start
-"
+text = "Start"
 
 [node name="Message" type="Control" parent="."]
 visible = false
@@ -88,26 +94,25 @@ text = "SendMessage"
 
 [node name="Status" type="Label" parent="."]
 layout_mode = 0
-offset_left = 261.0
-offset_top = 483.0
-offset_right = 301.0
-offset_bottom = 518.0
-theme_override_font_sizes/font_size = 32
+offset_left = 165.0
+offset_top = 190.0
+offset_right = 231.0
+offset_bottom = 200.0
+theme = ExtResource("2_m6crb")
 text = "Disconnected"
 
 [node name="ColorSelection" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 1007.0
-offset_top = 113.0
-offset_right = 1033.0
-offset_bottom = 232.0
-scale = Vector2(4, 4)
+offset_left = 295.667
+offset_top = 32.0
+offset_right = 321.667
+offset_bottom = 151.0
 
 [node name="RandomDeployment" type="CheckBox" parent="."]
 layout_mode = 0
-offset_left = 8.0
-offset_top = 165.0
-offset_right = 279.0
-offset_bottom = 207.0
-theme_override_font_sizes/font_size = 24
+offset_left = 3.0
+offset_top = 55.0
+offset_right = 86.0
+offset_bottom = 71.0
+theme = ExtResource("2_m6crb")
 text = "Random deployment"

@@ -1,5 +1,5 @@
 extends Node2D
-var DEBUG_MODE: bool = true
+var DEBUG_MODE: bool = false
 
 signal _prov_clicked(oldProvID: int, newProvID: int)
 signal newTurn(oldIndex: int, newIndex: int, indexChanged: bool, \

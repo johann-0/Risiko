@@ -15,6 +15,8 @@ func _ready():
 	var player: GameData.Player = GameData.players[GameData.localPlayerIndex]
 	$GameInfo/PlayerName.text += player._name
 	$GameInfo/ServerName.text += GameData.serverName.getName()
+	$RandomDeployment.hide()
+	$ColorSelection.hide()
 	# UI stuff: color picking
 	var but_col = [Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.AZURE]
 	for i in range(5):
@@ -64,9 +66,13 @@ func connect_after_timeout(timeout: float):
 	_client._connect_to_url(GameData.serverName.getName())
 
 func client_connected():
+	$RandomDeployment.show()
+	$ColorSelection.show()
 	$Status.text = "Connected"
 
 func client_disconnected():
+	$RandomDeployment.hide()
+	$ColorSelection.hide()
 	$Status.text = "Disconnected"
 
 func client_connecting():
@@ -93,8 +99,7 @@ func client_rec_data(data: String):
 			# Update the UI
 			var localPlayer = GameData.players[GameData.localPlayerIndex]
 			$GameInfo/PlayerName.text = "Your Name: " + \
-				GameData.players[GameData.localPlayerIndex]._name + \
-				" [" + str(localPlayer._id) + "]"
+				GameData.players[GameData.localPlayerIndex]._name
 			var index: int = 0
 			for player in GameData.players:
 				var player_obj = Player_UI.new_player_UI(\

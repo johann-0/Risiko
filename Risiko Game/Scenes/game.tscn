@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://b0d7nvx4yjxy2"]
 
 [ext_resource type="Script" path="res://Scripts/game.gd" id="1_8l15m"]
-[ext_resource type="Script" path="res://Scripts/camera_input.gd" id="3_x3dxi"]
+[ext_resource type="Script" path="res://Scripts/Finished/camera_input.gd" id="3_x3dxi"]
 [ext_resource type="PackedScene" uid="uid://dyeld0jqcr1i0" path="res://Scenes/ui.tscn" id="4_xp87e"]
 [ext_resource type="PackedScene" uid="uid://bteu6rr1m2jya" path="res://Scenes/map.tscn" id="5_yq1fu"]
 

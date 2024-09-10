@@ -14,6 +14,7 @@ script = ExtResource("1_cet53")
 
 [node name="Background" type="TextureRect" parent="."]
 modulate = Color(0.307329, 0.518448, 0.0792277, 1)
+layout_mode = 0
 offset_right = 384.0
 offset_bottom = 216.0
 texture = ExtResource("2_bwebs")
@@ -22,7 +23,7 @@ texture = ExtResource("2_bwebs")
 layout_mode = 0
 offset_left = 2.0
 offset_top = 2.0
-offset_right = 36.0
+offset_right = 35.0
 offset_bottom = 15.0
 theme = ExtResource("2_m6crb")
 text = "Back"
@@ -63,7 +64,7 @@ text = "Players: "
 
 [node name="Start" type="Button" parent="."]
 layout_mode = 0
-offset_left = 348.0
+offset_left = 349.0
 offset_top = 2.0
 offset_right = 382.0
 offset_bottom = 15.0
@@ -115,4 +116,11 @@ offset_top = 55.0
 offset_right = 86.0
 offset_bottom = 71.0
 theme = ExtResource("2_m6crb")
+text = "Random deployment"
+
+[node name="CheckButton" type="CheckButton" parent="RandomDeployment"]
+layout_mode = 0
+offset_top = 17.0
+offset_right = 80.0
+offset_bottom = 33.0
 text = "Random deployment"

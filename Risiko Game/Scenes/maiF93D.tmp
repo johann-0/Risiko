@@ -41,10 +41,10 @@ text = "Host"
 
 [node name="PlayerName" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 145.0
-offset_top = 55.0
-offset_right = 212.0
-offset_bottom = 69.0
+offset_left = 145.333
+offset_top = 55.3333
+offset_right = 184.333
+offset_bottom = 69.3333
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
 placeholder_text = "player_00"
@@ -58,7 +58,7 @@ offset_right = 261.0
 offset_bottom = 100.0
 scale = Vector2(2, 2)
 theme = ExtResource("2_8jt8f")
-placeholder_text = "127.0.0.1:8080"
+placeholder_text = "127:0:0:1:8080"
 
 [node name="MainMenu" type="Label" parent="."]
 offset_left = 141.667
@@ -71,12 +71,12 @@ text = "Main Menu"
 
 [node name="EnterPlayerName" type="Label" parent="."]
 layout_mode = 0
-offset_left = 21.3333
-offset_top = 63.6667
-offset_right = 143.333
-offset_bottom = 73.6667
+offset_left = 25.6667
+offset_top = 64.0
+offset_right = 143.667
+offset_bottom = 74.0
 theme = ExtResource("2_8jt8f")
-text = "Enter player name, max 16 chars: "
+text = "Enter player name, max 9 chars: "
 
 [node name="EnterServerAddress" type="Label" parent="."]
 layout_mode = 0

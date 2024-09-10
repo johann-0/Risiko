@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://du1jacvqbi4y5"]
 
 [ext_resource type="Texture2D" uid="uid://cvnyq2ckn2lmh" path="res://Assets/ui/Opening.png" id="1_sj2b4"]
-[ext_resource type="Script" path="res://Scripts/opener.gd" id="2_sn5ix"]
+[ext_resource type="Script" path="res://Scripts/Finished/opener.gd" id="2_sn5ix"]
 
 [node name="Opener" type="TextureRect"]
 anchors_preset = 15

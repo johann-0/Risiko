@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bx7wjah5818y2"]
 
 [ext_resource type="Texture2D" uid="uid://bacisiqevw3ua" path="res://Assets/ui/dice-Sheet.png" id="1_wovbn"]
-[ext_resource type="Script" path="res://Scripts/Die.gd" id="2_vgw45"]
+[ext_resource type="Script" path="res://Scripts/Finished/Die.gd" id="2_vgw45"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_adwom"]
 atlas = ExtResource("1_wovbn")

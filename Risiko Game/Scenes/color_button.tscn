@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cnv1d35xhqfly"]
 
-[ext_resource type="Script" path="res://Scripts/color_button.gd" id="1_t71sj"]
+[ext_resource type="Script" path="res://Scripts/Finished/color_button.gd" id="1_t71sj"]
 
 [sub_resource type="Gradient" id="Gradient_ylhk5"]
 offsets = PackedFloat32Array(0)

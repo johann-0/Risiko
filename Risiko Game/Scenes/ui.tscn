@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
 [ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
 [ext_resource type="PackedScene" uid="uid://cfx0vrgsv86w5" path="res://Scenes/stat.tscn" id="3_36gpu"]
-[ext_resource type="Script" path="res://Scripts/banner_ignore_input.gd" id="3_n6hxg"]
+[ext_resource type="Script" path="res://Scripts/Finished/banner_ignore_input.gd" id="3_n6hxg"]
 [ext_resource type="Texture2D" uid="uid://baa3pox2i0av3" path="res://Assets/ui/soldier_icon.png" id="5_mi587"]
 [ext_resource type="Texture2D" uid="uid://bt6d1qg77dhin" path="res://Assets/ui/top_tab.png" id="5_p3up7"]
 [ext_resource type="Texture2D" uid="uid://b3gd7vu2qunso" path="res://Assets/ui/to_add.png" id="6_mewqr"]
@@ -14,7 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://dqi1ovcuw2f8s" path="res://Assets/ui/top_tab_right.png" id="9_3vjmb"]
 [ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="9_k1qyu"]
 [ext_resource type="Texture2D" uid="uid://crpsesa5xfieq" path="res://Assets/ui/end_turn_pressed.png" id="10_vhepq"]
-[ext_resource type="Script" path="res://Scripts/Dice.gd" id="13_p0flr"]
+[ext_resource type="Script" path="res://Scripts/Finished/Dice.gd" id="13_p0flr"]
 [ext_resource type="PackedScene" uid="uid://bx7wjah5818y2" path="res://Scenes/die.tscn" id="14_x7tht"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ewk1o"]

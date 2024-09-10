@@ -1,10 +1,10 @@
 extends CanvasLayer
 
-func _ready():
-	GameData._prov_clicked.connect(_on_prov_clicked)
-	GameData.diceAreRollingChanged.connect(_on_dice_are_rolling)
+func _ready() -> void:
+	GameData.new_glo_sel_prov.connect(on_new_glo_sel_prov)
+	GameData.diceAreRollingChanged.connect(on_dice_are_rolling)
 	for province in GameData.provinces:
-		province.infoUpdated.connect(_on_prov_info_updated)
+		province.infoUpdated.connect(on_prov_info_updated)
 	
 	# Add the players and available troops to the UI
 	var index = 0
@@ -13,12 +13,8 @@ func _ready():
 		$Screen/Players.add_child(player_ui)
 		index += 1
 	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
-	
-	on_new_turn((GameData.turnPlayerIndex + 1) % GameData.players.size(), GameData.turnPlayerIndex)
 
-func _on_prov_info_updated(provID: int):
-	#if GameData.localPlayerIndex != GameData.turnPlayerIndex: # DEBUG
-		#print("prov_updated (not my turn)")
+func on_prov_info_updated(provID: int) -> void:
 	# Update the available troops
 	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)
 	# Update to_add value of the province
@@ -28,13 +24,13 @@ func _on_prov_info_updated(provID: int):
 	  and GameData.gameSelectedProvID != -1:
 		update_dice()
 
-func _on_dice_are_rolling(oldVal: bool, newVal: bool):
+func on_dice_are_rolling(oldVal: bool, newVal: bool) -> void:
 	if newVal == true:
 		$Screen/EndTurn.hide()
 	else:
 		$Screen/EndTurn.show()
 
-func update_dice():
+func update_dice() -> void:
 	if GameData.gamePhase == GameData.Phase.attack \
 	  and GameData.gameAttackedProvID != -1 \
 	  and GameData.provinces[GameData.gameAttackedProvID]._owner != GameData.turnPlayerIndex:
@@ -48,7 +44,7 @@ func update_dice():
 
 # Called by parent
 func on_new_turn(oldIndex, newIndex, indexChanged = false \
-  , oldPhase = GameData.Phase.lobby, newPhase = GameData.Phase.lobby, phaseChanged = false): 
+  , oldPhase = GameData.Phase.lobby, newPhase = GameData.Phase.lobby, phaseChanged = false) -> void: 
 	if oldIndex != -1:
 		$Screen/Players.get_child(oldIndex).setBackgroundColor(Color.BLACK)
 	if newIndex != -1:
@@ -70,7 +66,7 @@ func on_new_turn(oldIndex, newIndex, indexChanged = false \
 		$Screen/UpperBanner/AvailTroops.hide()
 		$Screen/UpperBanner/AvailTroopsTexture.hide()
 
-func _on_prov_clicked(_oldProvID: int, _newProvID: int):
+func on_new_glo_sel_prov(_oldProvID: int, _newProvID: int) -> void:
 	var selProv: GameData.Province = GameData.get_selected_prov()
 	var provName: String = ""
 	var provSoldiers: String = ""

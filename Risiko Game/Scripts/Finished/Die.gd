@@ -14,16 +14,15 @@ var state: State = State.fixed
 var timeout: float = 0.0
 
 func _ready() -> void:
-	randomify()
+	randomize_num()
 	state = State.fixed
 
 func roll(_roll_randomly: bool) -> void:
 	roll_randomly = _roll_randomly
 	state = State.rolling
 
-func stop_roll() -> int:
+func stop_roll() -> void:
 	state = State.fixed
-	return number
 
 func _process(delta) -> void:
 	if state != State.rolling: return
@@ -32,11 +31,11 @@ func _process(delta) -> void:
 	if timeout < TIME_PER_FRAME: return
 	
 	timeout -= TIME_PER_FRAME
-	if roll_randomly: randomify()
-	else: linearify()
+	if roll_randomly: randomize_num()
+	else: increment_num()
 
-func randomify() -> void:
+func randomize_num() -> void:
 	number = randi() % 6 + 1
 
-func linearify() -> void:
+func increment_num() -> void:
 	number = (number + 1) % 6 + 1

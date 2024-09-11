@@ -1,6 +1,6 @@
 extends Node2D
 
-var client: GameData.Client = GameData.client
+var client: UDP_client = GameData.client
 
 func _ready() -> void:
 	# Connect functions

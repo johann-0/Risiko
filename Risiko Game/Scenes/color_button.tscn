@@ -12,24 +12,37 @@ width = 24
 height = 24
 
 [node name="ColorButton" type="Control"]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -1128.0
+offset_bottom = -624.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_t71sj")
 
 [node name="Button" type="TextureButton" parent="."]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_right = 12.0
+offset_bottom = 24.0
+grow_horizontal = 2
 texture_normal = SubResource("GradientTexture2D_rf4jl")
 
 [node name="Cover" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 24.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.0
+offset_right = 12.0
 offset_bottom = 24.0
+grow_horizontal = 2
 color = Color(0, 0, 0, 0.588235)
 
 [connection signal="pressed" from="Button" to="." method="_on_pressed"]

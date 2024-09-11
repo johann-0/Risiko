@@ -1,7 +1,7 @@
 class_name Player_UI
 extends Control
 
-static func new_player_UI(pPos: Vector2i, pId: int, pName: String, pColor: Color) -> Player_UI:
+static func new_player_UI(pPos: Vector2i, pName: String, pColor: Color) -> Player_UI:
 	var my_scene: PackedScene = load("res://Scenes/player_ui.tscn")
 	var toReturn: Player_UI = my_scene.instantiate()
 	toReturn.setText(pName)

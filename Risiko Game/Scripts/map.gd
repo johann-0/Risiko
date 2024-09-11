@@ -3,7 +3,7 @@ extends Node2D
 @onready var curMap: Sprite2D = $WastelandMap
 @onready var mat: Material = $OverlayMap.material # For all overlaying layers
 @onready var NUM_PROV: int = GameData.NUM_PROV
-@onready var mask: Array[Array] = [] # 0 = Global, 1 = Local, 2 = Political
+@onready var mask: Array = [] # 0 = Global, 1 = Local, 2 = Political
 
 signal map_prov_clicked(provID: int)
 
@@ -27,7 +27,7 @@ func _ready() -> void:
 	
 	# Initialize mask
 	for i in range(Mask.size()):
-		var newArr: Array[Color] = []
+		var newArr: Array = []
 		newArr.resize(NUM_PROV)
 		newArr.fill(Color.TRANSPARENT)
 		mask.append(newArr)
@@ -42,8 +42,8 @@ func _ready() -> void:
 		#newSold.visibility_layer = 1 # IDK why this is here...
 		$SoldierObjs.add_child(newSold)
 
-func foldMask() -> Array[Color]:
-	var toReturn: Array[Color] = []
+func foldMask() -> Array:
+	var toReturn: Array = []
 	for i in range(NUM_PROV):
 		var toAdd: Color = Color8(0,0,0,0)
 		for j in range(Mask.size()):
@@ -82,11 +82,11 @@ func _on_new_glo_sel_prov(oldProvID: int, newProvID: int) -> void:
 	if oldProvID == newProvID:
 		return
 	# Color out the previous province
-	if oldProvID != GameData.Province.WASTELAND_ID:
+	if oldProvID != Province.WASTELAND_ID:
 		set_mask_color(oldProvID, Color.TRANSPARENT, 0) # 0=Global
 		apply_mask()
 	# Color in the new province
-	if newProvID != GameData.Province.WASTELAND_ID and \
+	if newProvID != Province.WASTELAND_ID and \
 	   GameData.turnPlayerIndex != GameData.localPlayerIndex:
 		set_mask_color(newProvID, GameData.GAME_SEL_COLOR, 0) # 0=Global
 		apply_mask()
@@ -95,11 +95,11 @@ func _on_new_glo_att_prov(oldProvID: int, newProvID: int) -> void:
 	if oldProvID == newProvID:
 		return
 	# Color out any previous attacked province
-	if oldProvID != GameData.Province.WASTELAND_ID:
+	if oldProvID != Province.WASTELAND_ID:
 		set_mask_color(oldProvID, Color.TRANSPARENT, 0) # 0=Global
 		apply_mask()
 	# Color in the new attacked province
-	if newProvID != GameData.Province.WASTELAND_ID:
+	if newProvID != Province.WASTELAND_ID:
 		set_mask_color(newProvID, GameData.GAME_ATT_COLOR, 0) # 0=Global
 		apply_mask()
 
@@ -122,7 +122,7 @@ func _on_new_loc_sel_prov(oldProvID: int, newProvID: int) -> void:
 	if(oldProvID == newProvID):
 		return
 	# Color out previous province(s)
-	if oldProvID != GameData.Province.WASTELAND_ID:
+	if oldProvID != Province.WASTELAND_ID:
 		var oldProv = GameData.provinces[oldProvID]
 		var provIDs: Array = []
 		provIDs.append(oldProvID)
@@ -134,7 +134,7 @@ func _on_new_loc_sel_prov(oldProvID: int, newProvID: int) -> void:
 		apply_mask()
 	
 	# Color in new province(s)
-	if newProvID != GameData.Province.WASTELAND_ID:
+	if newProvID != Province.WASTELAND_ID:
 		var newProv = GameData.provinces[newProvID]
 		var provIDs: Array = []
 		provIDs.append(newProvID)

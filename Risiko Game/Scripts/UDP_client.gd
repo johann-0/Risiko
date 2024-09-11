@@ -1,7 +1,10 @@
+class_name UDP_client
 extends Node
 
-var peer: ENetMultiplayerPeer = null
+@onready var peer: ENetMultiplayerPeer = null
 @onready var g_multiplayer = GameData.multiplayer
+@onready var id: int = 0
+@onready var disconnected_reason: String = "unknown"
 
 signal peer_connected(id: int)
 signal peer_disconnected(id: int)
@@ -16,18 +19,30 @@ func _ready() -> void:
 	g_multiplayer.connection_failed.connect(on_connection_failed) # Only clients
 	g_multiplayer.server_disconnected.connect(on_disconnected_from_server) # Only clients
 
-func id_print(text: String) -> void:
-	print("[" + str(g_multiplayer.get_unique_id()) + "] " + text)
+@rpc("authority","call_remote", "reliable")
+func disconnecting_from_host(reason: String):
+	disconnected_reason = reason
+	print("TREASON")
+
+func disconnect_client(_id: int, _reason: String):
+	if not GameData.multiplayer.is_server():
+		return
+	disconnecting_from_host.rpc_id(_id, _reason)
+	await get_tree().create_timer(0.5).timeout
+	peer.disconnect_peer(_id)
 
 func on_peer_connected(_id: int) -> void:
 	id_print("peer_connected: " + str(_id))
 	peer_connected.emit(_id)
+	#if GameData.multiplayer.is_server(): # DEBUG
+		#disconnect_client(_id, "Test") # DEBUG
 
 func on_peer_disconnected(_id: int) -> void:
 	id_print("peer_disconnected: " + str(_id))
 	peer_disconnected.emit(_id)
 
 func on_connected_to_server() -> void:
+	id = g_multiplayer.get_unique_id()
 	id_print("connected_to_server")
 	connected_to_server.emit()
 
@@ -36,7 +51,8 @@ func on_connection_failed() -> void:
 	connection_failed.emit()
 
 func on_disconnected_from_server() -> void:
-	id_print("server_disconnected")
+	id_print("server_disconnected (" + disconnected_reason + ")")
+	id = 0
 	disconnected_from_server.emit()
 
 func close_connection() -> void:
@@ -63,6 +79,7 @@ func make_server(address: String) -> void:
 		return
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
 	g_multiplayer.set_multiplayer_peer(peer)
+	id = g_multiplayer.get_unique_id()
 	id_print("Server started: " + str(IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")), IP.TYPE_IPV4)))
 
 func make_client(address: String) -> void:
@@ -85,3 +102,6 @@ func make_client(address: String) -> void:
 		return
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
 	g_multiplayer.set_multiplayer_peer(peer)
+
+func id_print(text: String) -> void:
+	print("[" + str(id) + "] " + text)

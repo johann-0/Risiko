@@ -19,48 +19,57 @@ offset_right = 384.0
 offset_bottom = 216.0
 texture = ExtResource("2_5rr8p")
 
-[node name="Join" type="Button" parent="."]
-layout_mode = 0
-offset_left = 222.0
-offset_top = 152.0
-offset_right = 259.0
-offset_bottom = 165.0
-scale = Vector2(2, 2)
-theme = ExtResource("2_8jt8f")
-text = "Join"
+[node name="EnterInfo" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.255
+anchor_right = 0.5
+anchor_bottom = 0.255
+offset_left = -180.0
+offset_top = -0.0800056
+offset_right = 180.0
+offset_bottom = 70.0
 
-[node name="Host" type="Button" parent="."]
-layout_mode = 0
-offset_left = 82.0
-offset_top = 152.0
-offset_right = 125.0
-offset_bottom = 165.0
-scale = Vector2(2, 2)
-theme = ExtResource("2_8jt8f")
-text = "Host"
+[node name="Player" type="HBoxContainer" parent="EnterInfo"]
+layout_mode = 2
 
-[node name="PlayerName" type="LineEdit" parent="."]
-layout_mode = 0
-offset_left = 145.0
-offset_top = 55.0
-offset_right = 212.0
-offset_bottom = 69.0
-scale = Vector2(2, 2)
+[node name="EnterPlayer" type="Label" parent="EnterInfo/Player"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
 theme = ExtResource("2_8jt8f")
-placeholder_text = "player_00"
-max_length = 9
+text = "Enter player name, max 16 chars:"
+horizontal_alignment = 2
 
-[node name="ServerAddress" type="LineEdit" parent="."]
-layout_mode = 0
-offset_left = 145.0
-offset_top = 86.0
-offset_right = 261.0
-offset_bottom = 100.0
-scale = Vector2(2, 2)
+[node name="PlayerName" type="LineEdit" parent="EnterInfo/Player"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 11
 theme = ExtResource("2_8jt8f")
-placeholder_text = "127.0.0.1:8080"
+theme_override_font_sizes/font_size = 20
+text = "player_00"
+max_length = 20
+
+[node name="Address" type="HBoxContainer" parent="EnterInfo"]
+layout_mode = 2
+
+[node name="EnterAddress" type="Label" parent="EnterInfo/Address"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme = ExtResource("2_8jt8f")
+text = "Enter server address and port:"
+horizontal_alignment = 2
+
+[node name="Address" type="LineEdit" parent="EnterInfo/Address"]
+layout_mode = 2
+size_flags_horizontal = 11
+theme = ExtResource("2_8jt8f")
+theme_override_font_sizes/font_size = 20
+text = "127.0.0.1:8080"
+max_length = 30
 
 [node name="MainMenu" type="Label" parent="."]
+layout_mode = 0
 offset_left = 141.667
 offset_top = 5.66667
 offset_right = 174.667
@@ -69,20 +78,42 @@ scale = Vector2(3, 3)
 theme = ExtResource("2_8jt8f")
 text = "Main Menu"
 
-[node name="EnterPlayerName" type="Label" parent="."]
-layout_mode = 0
-offset_left = 21.3333
-offset_top = 63.6667
-offset_right = 143.333
-offset_bottom = 73.6667
-theme = ExtResource("2_8jt8f")
-text = "Enter player name, max 16 chars: "
+[node name="Bottom" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.7
+anchor_right = 0.5
+anchor_bottom = 0.7
+offset_left = -130.0
+offset_top = -0.199997
+offset_right = 130.0
+offset_bottom = 58.8
 
-[node name="EnterServerAddress" type="Label" parent="."]
-layout_mode = 0
-offset_left = 26.0
-offset_top = 93.0
-offset_right = 140.0
-offset_bottom = 103.0
+[node name="Buttons" type="HBoxContainer" parent="Bottom"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="Bottom/Buttons"]
+custom_minimum_size = Vector2(90, 30)
+layout_mode = 2
+size_flags_horizontal = 6
 theme = ExtResource("2_8jt8f")
-text = "Enter server address and port:"
+theme_override_font_sizes/font_size = 20
+text = "Host"
+
+[node name="Join" type="Button" parent="Bottom/Buttons"]
+custom_minimum_size = Vector2(90, 30)
+layout_mode = 2
+size_flags_horizontal = 6
+theme = ExtResource("2_8jt8f")
+theme_override_font_sizes/font_size = 20
+text = "Join"
+
+[node name="Label" type="Label" parent="Bottom"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("2_8jt8f")
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "Status"
+horizontal_alignment = 1
+vertical_alignment = 1

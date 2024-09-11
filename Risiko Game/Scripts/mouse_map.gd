@@ -60,5 +60,3 @@ func _unhandled_input(event):
 						GameData.gameAttackedProvID = -1
 				else:
 					GameData.gameAttackedProvID = -1
-
-

@@ -67,7 +67,7 @@ func on_new_turn(oldIndex, newIndex, indexChanged = false \
 		$Screen/UpperBanner/AvailTroopsTexture.hide()
 
 func on_new_glo_sel_prov(_oldProvID: int, _newProvID: int) -> void:
-	var selProv: GameData.Province = GameData.get_selected_prov()
+	var selProv: Province = GameData.get_selected_prov()
 	var provName: String = ""
 	var provSoldiers: String = ""
 	var provToAdd: String = ""

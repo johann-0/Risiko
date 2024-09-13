@@ -1,7 +1,9 @@
 extends Sprite2D
 
+var input_disabled = false
+
 func _unhandled_input(event):
-	if GameData.diceAreRolling == true:
+	if input_disabled == true:
 		return
 	if event is InputEventMouseButton:
 		var mouseX = get_global_mouse_position().x - global_position.x
@@ -38,25 +40,22 @@ func _unhandled_input(event):
 						if neighbor_index == id:
 							isNeighboringProvince = true
 					if isNeighboringProvince:
-						print("new attack provid: " + str(id))
-						GameData.gameAttackedProvID = id
+						GameData.glo_mov_prov = id
 					else:
-						GameData.gameAttackedProvID = -1
+						GameData.glo_mov_prov = -1
 				else:
-					GameData.gameAttackedProvID = -1
+					GameData.glo_mov_prov = -1
 			
 			elif GameData.gamePhase == GameData.Phase.fortify \
 			  and GameData.already_moved == false:
-				#print("WORKS 1") # DEBUG
 				if id >= 0 and id < GameData.NUM_PROV and color.g == 0 and color.b == 0 \
 				  and GameData.localPlayerIndex == GameData.provinces[id]._owner \
 				  and GameData.localPlayerIndex == GameData.provinces[GameData.selectedProvID]._owner \
 				  and GameData.provinces[GameData.selectedProvID]._soldiers > 1:
-					#print("WORKS 2") # DEBUG
 					if GameData.are_provs_reachable(GameData.selectedProvID, id):
 						print("new move provid: " + str(id))
-						GameData.gameAttackedProvID = id
+						GameData.glo_mov_prov = id
 					else:
-						GameData.gameAttackedProvID = -1
+						GameData.glo_mov_prov = -1
 				else:
-					GameData.gameAttackedProvID = -1
+					GameData.glo_mov_prov = -1

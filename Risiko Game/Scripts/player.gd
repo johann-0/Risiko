@@ -5,7 +5,7 @@ var name: String
 var color: Color
 
 func _init(_id: int, _name: String, _color: Color):
-	id = id; name = _name; color = _color;
+	id = _id; name = _name; color = _color;
 
 static func DEFAULT_PLAYER() -> Player:
 	return Player.new(0, "Player_" + str(randi()%64), Color.AZURE)

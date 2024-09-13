@@ -9,7 +9,7 @@ func _ready() -> void:
 	# Add the players and available troops to the UI
 	var index = 0
 	for player in GameData.players:
-		var player_ui = Player_UI.new_player_UI(Vector2i(0,index * 14), player._id, player._name, player._color)
+		var player_ui = Player_UI.new_player_UI(Vector2i(0,index * 14), player._name, player._color)
 		$Screen/Players.add_child(player_ui)
 		index += 1
 	$Screen/UpperBanner/AvailTroops/Value.text = ": " + str(GameData.turnAvailSoldiers)

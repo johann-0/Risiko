@@ -1,0 +1,166 @@
+[gd_scene load_steps=5 format=3 uid="uid://dddb3xveecq3o"]
+
+[ext_resource type="Script" path="res://Scripts/lobby.gd" id="1_cet53"]
+[ext_resource type="Texture2D" uid="uid://btukwlt6hshb" path="res://Assets/ui/white_background.png" id="2_bwebs"]
+[ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="2_m6crb"]
+[ext_resource type="PackedScene" uid="uid://cnv1d35xhqfly" path="res://Scenes/color_button.tscn" id="4_nl1gm"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 384.0
+offset_bottom = 216.0
+scale = Vector2(3, 3)
+script = ExtResource("1_cet53")
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(0.307329, 0.518448, 0.0792277, 1)
+layout_mode = 0
+offset_right = 384.0
+offset_bottom = 216.0
+texture = ExtResource("2_bwebs")
+
+[node name="Back" type="Button" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 35.0
+offset_bottom = 15.0
+theme = ExtResource("2_m6crb")
+text = "Back"
+
+[node name="GameInfo" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = 5.0
+offset_right = 75.0
+offset_bottom = 205.0
+
+[node name="Name" type="HBoxContainer" parent="GameInfo"]
+layout_mode = 2
+
+[node name="Descriptor" type="Label" parent="GameInfo/Name"]
+layout_mode = 2
+theme = ExtResource("2_m6crb")
+text = "Your name:"
+
+[node name="PlayerName" type="Label" parent="GameInfo/Name"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme = ExtResource("2_m6crb")
+text = "player_00"
+horizontal_alignment = 2
+
+[node name="Server" type="HBoxContainer" parent="GameInfo"]
+layout_mode = 2
+
+[node name="Descriptor" type="Label" parent="GameInfo/Server"]
+layout_mode = 2
+theme = ExtResource("2_m6crb")
+text = "Server: "
+
+[node name="ServerName" type="Label" parent="GameInfo/Server"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme = ExtResource("2_m6crb")
+text = "127.0.0.1:8080"
+
+[node name="PlayersLabel" type="Label" parent="GameInfo"]
+layout_mode = 2
+theme = ExtResource("2_m6crb")
+text = "Players: "
+horizontal_alignment = 1
+
+[node name="Players" type="VBoxContainer" parent="GameInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Status" type="Label" parent="GameInfo"]
+layout_mode = 2
+size_flags_vertical = 8
+theme = ExtResource("2_m6crb")
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+text = "Connected"
+horizontal_alignment = 1
+
+[node name="StatusReason" type="Label" parent="GameInfo"]
+layout_mode = 2
+size_flags_vertical = 8
+theme = ExtResource("2_m6crb")
+text = "No Reason"
+horizontal_alignment = 1
+
+[node name="Start" type="Button" parent="."]
+layout_mode = 0
+offset_left = 349.0
+offset_top = 2.0
+offset_right = 382.0
+offset_bottom = 15.0
+theme = ExtResource("2_m6crb")
+text = "Start"
+
+[node name="Message" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_left = 210.0
+offset_top = 289.0
+offset_right = 250.0
+offset_bottom = 329.0
+
+[node name="MesText" type="TextEdit" parent="Message"]
+layout_mode = 0
+offset_right = 332.0
+offset_bottom = 74.0
+placeholder_text = "Enter message..."
+
+[node name="MesButton" type="Button" parent="Message"]
+layout_mode = 0
+offset_left = 156.0
+offset_top = 80.0
+offset_right = 270.0
+offset_bottom = 111.0
+text = "SendMessage"
+
+[node name="ColorSelection" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 296.0
+offset_top = 32.0
+offset_right = 343.0
+offset_bottom = 199.0
+
+[node name="SelectColor" type="Label" parent="ColorSelection"]
+layout_mode = 2
+theme = ExtResource("2_m6crb")
+text = "Select color:"
+
+[node name="Color1" parent="ColorSelection" instance=ExtResource("4_nl1gm")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Color2" parent="ColorSelection" instance=ExtResource("4_nl1gm")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Color3" parent="ColorSelection" instance=ExtResource("4_nl1gm")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Color4" parent="ColorSelection" instance=ExtResource("4_nl1gm")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Color5" parent="ColorSelection" instance=ExtResource("4_nl1gm")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RandomDeployment" type="CheckBox" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 55.0
+offset_right = 86.0
+offset_bottom = 71.0
+theme = ExtResource("2_m6crb")
+text = "Random deployment"

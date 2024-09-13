@@ -3,7 +3,6 @@ extends Node
 
 @onready var peer: ENetMultiplayerPeer = null
 @onready var g_multiplayer = GameData.multiplayer
-@onready var id: int = 0
 @onready var disconnected_reason: String = "unknown"
 
 signal peer_connected(id: int)
@@ -25,7 +24,7 @@ func disconnecting_from_host(reason: String):
 	print("TREASON")
 
 func disconnect_client(_id: int, _reason: String):
-	if not GameData.multiplayer.is_server():
+	if not g_multiplayer.is_server():
 		return
 	disconnecting_from_host.rpc_id(_id, _reason)
 	await get_tree().create_timer(0.5).timeout
@@ -34,7 +33,7 @@ func disconnect_client(_id: int, _reason: String):
 func on_peer_connected(_id: int) -> void:
 	id_print("peer_connected: " + str(_id))
 	peer_connected.emit(_id)
-	#if GameData.multiplayer.is_server(): # DEBUG
+	#if g_multiplayer.is_server(): # DEBUG
 		#disconnect_client(_id, "Test") # DEBUG
 
 func on_peer_disconnected(_id: int) -> void:
@@ -42,7 +41,7 @@ func on_peer_disconnected(_id: int) -> void:
 	peer_disconnected.emit(_id)
 
 func on_connected_to_server() -> void:
-	id = g_multiplayer.get_unique_id()
+	#DEBUGid = g_multiplayer.get_unique_id()
 	id_print("connected_to_server")
 	connected_to_server.emit()
 
@@ -52,7 +51,7 @@ func on_connection_failed() -> void:
 
 func on_disconnected_from_server() -> void:
 	id_print("server_disconnected (" + disconnected_reason + ")")
-	id = 0
+	#DEBUGid = 0
 	disconnected_from_server.emit()
 
 func close_connection() -> void:
@@ -60,18 +59,13 @@ func close_connection() -> void:
 	g_multiplayer.multiplayer_peer = null
 
 func make_server(address: String) -> void:
-	print("Starting server: " + address)
-	GameData.server_addr = address
+	var returned: Array[String] = get_port_and_address(address)
+	var port: String = returned[0]
+	GameData.server_addr = IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),IP.TYPE_IPV4) \
+	  + ":" + port
+	print("Starting server: " + GameData.server_addr)
+	g_multiplayer.set_multiplayer_peer(null)
 	peer = ENetMultiplayerPeer.new()
-	var port: String = ""
-	for i in range(address.length()):
-		var cha = address[len(address) - 1 - i]
-		if cha == ":":
-			break
-		else:
-			port += cha
-	port = port.reverse()
-	#peer.set_bind_ip("127.0.0.1") # DEBUG
 	var err: Error = peer.create_server(int(port), 3) # Maximum of 3 peers (total: 4 players).
 	if err != OK:
 		# Is another server running?
@@ -79,29 +73,40 @@ func make_server(address: String) -> void:
 		return
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
 	g_multiplayer.set_multiplayer_peer(peer)
-	id = g_multiplayer.get_unique_id()
-	id_print("Server started: " + str(IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")), IP.TYPE_IPV4)))
+	#DEBUGid = g_multiplayer.get_unique_id()
+	id_print("Server started: " + GameData.server_addr)
 
 func make_client(address: String) -> void:
-	GameData.server_addr = address
+	var returned: Array[String] = get_port_and_address(address)
+	var port: String = returned[0]
+	address = returned[1]
+	GameData.server_addr = address + ":" + port
 	print("Client connecting to: " + address)
+	g_multiplayer.set_multiplayer_peer(null)
 	peer = ENetMultiplayerPeer.new()
-	var port: String = ""
-	var n: int = address.length()
-	for i in range(n):
-		var cha = address[address.length() - 1]
-		address = address.substr(0, address.length() - 1)
-		if cha == ":":
-			break
-		else:
-			port += cha
-	port = port.reverse()
 	var err: Error = peer.create_client(address, int(port))
 	if err != OK:
 		printerr("Error while creating client (" + str(err) + ")")
 		return
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
+	#DEBUGid = g_multiplayer.get_unique_id()
 	g_multiplayer.set_multiplayer_peer(peer)
 
 func id_print(text: String) -> void:
-	print("[" + str(id) + "] " + text)
+	pass#DEBUGprint("[" + str(id) + "] " + text)
+
+func get_port_and_address(address: String) -> Array[String]:
+	var toReturn: Array[String] = ["",""]
+	var port: String = ""
+	var n: int = address.length()
+	for i in range(n):
+		var cur_char = address[address.length() - 1]
+		address = address.substr(0, address.length() - 1)
+		if cur_char == ":":
+			break
+		else:
+			port += cur_char
+	port = port.reverse()
+	toReturn[0] = port
+	toReturn[1] = address
+	return toReturn

@@ -3,7 +3,7 @@ extends Node2D
 var DEBUG_MODE: bool = false
 signal new_loc_sel_prov(old_prov_id: int, new_prov_id: int)
 signal new_glo_sel_prov(old_prov_id: int, new_prov_id: int)
-signal new_glo_att_prov(old_prov_id: int, new_prov_id: int)
+signal new_glo_mov_prov(old_prov_id: int, new_prov_id: int)
 signal new_turn(old_idx:int, new_idx:int, idx_chgd:bool \
   , old_phase:Phase, new_phase:Phase, phase_changed:bool)
 signal new_phase(old_phase: Phase, new_phase: Phase, phase_changed: bool)
@@ -39,20 +39,32 @@ var cur_phase: Phase = Phase.main_menu
 
 enum Phase { main_menu, lobby, init_deploy, deploy, attack, fortify}
 
-var loc_sel_prov: int = Province.WASTELAND_ID # local_selected_province_id
-var glo_sel_prov: int = Province.WASTELAND_ID # global_selected_province_id
-var glo_mov_prov: int = Province.WASTELAND_ID # global_move_to_province_id
-var loc_player_id: int = -1 # local_player_id
-var glo_player_id: int = -1 # global_player_id
+var loc_sel_prov: int = Province.WASTELAND_ID: # local_selected_province_id
+	set(new_val):
+		if new_val == loc_sel_prov: return
+		var old_val = loc_sel_prov; loc_sel_prov = new_val
+		new_loc_sel_prov.emit(old_val, new_val)
+var glo_sel_prov: int = Province.WASTELAND_ID: # global_selected_province_id
+	set(new_val):
+		if new_val == glo_sel_prov: return
+		var old_val = glo_sel_prov; glo_sel_prov = new_val
+		new_glo_sel_prov.emit(old_val, new_val)
+var glo_mov_prov: int = Province.WASTELAND_ID: # global_move_to_province_id
+	set(new_val):
+		if new_val == glo_mov_prov: return
+		var old_val = glo_mov_prov; glo_mov_prov = new_val
+		new_glo_mov_prov.emit(old_val, new_val)
+var loc_player_ind: int = -1 # local_player_id
+var glo_player_ind: int = -1 # global_player_id
 func is_loc_players_turn() -> bool:
-	return loc_player_id == glo_player_id
+	return loc_player_ind == glo_player_ind
 
 func _ready():
 	get_provinces_from_json()
 	client = UDP_client.new()
 	add_child(client)
 	var p_name = "player_" + str(abs(randi() % 100))
-	GameData.loc_player_id = 0
+	GameData.loc_player_ind = 0
 	GameData.players.append(Player.new(0, p_name, Color.AZURE))
 
 func get_provinces_from_json() -> void:
@@ -62,7 +74,7 @@ func get_provinces_from_json() -> void:
 	if json.parse(text) != OK:
 		print("Parsing provs: unexpected error!")
 		return
-	print("Parsing provs: success!")
+	print("Parsing provs: success!\n")
 	
 	NUM_PROV = json["data"]["num_of_provinces"]
 	for provinceID in json["data"]["provinces"]:

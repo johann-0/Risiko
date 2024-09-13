@@ -35,6 +35,7 @@ grow_horizontal = 2
 texture_normal = SubResource("GradientTexture2D_rf4jl")
 
 [node name="Cover" type="ColorRect" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5

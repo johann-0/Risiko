@@ -1,16 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://t2mqkq3gwrx0"]
+[gd_scene load_steps=5 format=3 uid="uid://t2mqkq3gwrx0"]
 
 [ext_resource type="Script" path="res://Scripts/Finished/player_ui.gd" id="1_74g0x"]
 [ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="2_xu774"]
+[ext_resource type="Texture2D" uid="uid://bacisiqevw3ua" path="res://Assets/ui/dice-Sheet.png" id="3_voxp4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jn4o"]
+atlas = ExtResource("3_voxp4")
+region = Rect2(32, 0, 8, 8)
 
 [node name="Player" type="Control"]
-custom_minimum_size = Vector2(51, 14)
+custom_minimum_size = Vector2(81, 14)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1101.0
-offset_bottom = -634.0
+offset_right = 81.0
+offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
@@ -18,10 +20,10 @@ script = ExtResource("1_74g0x")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 0
-offset_right = 51.0
+offset_right = 81.0
 offset_bottom = 14.0
 mouse_filter = 2
-color = Color(0, 0, 0, 1)
+color = Color(0.295774, 0.147255, 1.20327e-07, 1)
 
 [node name="Text" type="Label" parent="."]
 layout_mode = 0
@@ -34,8 +36,17 @@ text = "Player_99"
 
 [node name="Color" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 1.0
-offset_right = 13.0
-offset_bottom = 13.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 11.0
+offset_bottom = 11.0
 mouse_filter = 2
+
+[node name="Random" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 11.0
+offset_bottom = 11.0
+texture = SubResource("AtlasTexture_0jn4o")

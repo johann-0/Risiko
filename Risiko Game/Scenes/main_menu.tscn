@@ -57,7 +57,8 @@ layout_mode = 2
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 theme = ExtResource("2_8jt8f")
-text = "Enter server address and port:"
+text = "If hosting only the port matters,
+if joining then address and port:"
 horizontal_alignment = 2
 
 [node name="Address" type="LineEdit" parent="EnterInfo/Address"]
@@ -109,11 +110,20 @@ theme = ExtResource("2_8jt8f")
 theme_override_font_sizes/font_size = 20
 text = "Join"
 
-[node name="Label" type="Label" parent="Bottom"]
+[node name="Status" type="Label" parent="Bottom"]
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_8jt8f")
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 text = "Status"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Reason" type="Label" parent="Bottom"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("2_8jt8f")
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "Reason"
 horizontal_alignment = 1
 vertical_alignment = 1

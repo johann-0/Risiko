@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dyeld0jqcr1i0"]
+[gd_scene load_steps=25 format=3 uid="uid://dyeld0jqcr1i0"]
 
 [ext_resource type="Script" path="res://Scripts/ui.gd" id="1_kh6vk"]
 [ext_resource type="Texture2D" uid="uid://fbvynr071kat" path="res://Assets/ui/bottom_tab.png" id="2_nodni"]
@@ -9,11 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://b3gd7vu2qunso" path="res://Assets/ui/to_add.png" id="6_mewqr"]
 [ext_resource type="Texture2D" uid="uid://cvygsk8hd8rdn" path="res://Assets/ui/turn_icon.png" id="6_ocdlk"]
 [ext_resource type="Texture2D" uid="uid://bkg7g7dr52yaf" path="res://Assets/ui/avail_troops.png" id="7_y08sn"]
-[ext_resource type="Texture2D" uid="uid://cs2qyihny370t" path="res://Assets/ui/end_turn_normal.png" id="8_1ervx"]
 [ext_resource type="Script" path="res://Scripts/upper_banner_ignore_input.gd" id="8_q2bj8"]
 [ext_resource type="Texture2D" uid="uid://dqi1ovcuw2f8s" path="res://Assets/ui/top_tab_right.png" id="9_3vjmb"]
 [ext_resource type="Theme" uid="uid://bnehbdwc2p6ne" path="res://Assets/ui/main_theme.tres" id="9_k1qyu"]
-[ext_resource type="Texture2D" uid="uid://crpsesa5xfieq" path="res://Assets/ui/end_turn_pressed.png" id="10_vhepq"]
 [ext_resource type="Script" path="res://Scripts/Finished/Dice.gd" id="13_p0flr"]
 [ext_resource type="PackedScene" uid="uid://bx7wjah5818y2" path="res://Scenes/die.tscn" id="14_x7tht"]
 
@@ -53,6 +51,8 @@ atlas = SubResource("CompressedTexture2D_s8jtf")
 region = Rect2(0, 0, 8, 8)
 
 [node name="UI" type="CanvasLayer"]
+scale = Vector2(4, 4)
+transform = Transform2D(4, 0, 0, 4, 0, 0)
 script = ExtResource("1_kh6vk")
 
 [node name="Screen" type="Control" parent="."]
@@ -60,7 +60,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 288.0
 offset_bottom = 162.0
-scale = Vector2(4, 4)
 mouse_filter = 2
 
 [node name="LowerBanner" type="TextureRect" parent="Screen"]
@@ -157,29 +156,21 @@ texture = ExtResource("7_y08sn")
 offset_right = 22.0
 text = ": 10"
 
-[node name="Players" type="Control" parent="Screen"]
-anchors_preset = 0
+[node name="Players" type="ColorRect" parent="Screen"]
+layout_mode = 0
 offset_top = 14.0
-offset_right = 54.0
+offset_right = 83.0
 offset_bottom = 70.0
+scale = Vector2(0.5, 0.5)
 mouse_filter = 2
+color = Color(1, 1, 1, 0)
 
-[node name="EndTurn" type="TextureButton" parent="Screen"]
+[node name="EndTurn" type="Button" parent="Screen"]
 layout_mode = 1
 anchors_preset = -1
 offset_left = 254.0
 offset_right = 288.0
-offset_bottom = 12.0
-texture_normal = ExtResource("8_1ervx")
-texture_pressed = ExtResource("10_vhepq")
-
-[node name="Label" type="Label" parent="Screen/EndTurn"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 33.0
-offset_bottom = 12.0
-mouse_filter = 1
+offset_bottom = 13.0
 theme = ExtResource("9_k1qyu")
 text = "End Turn"
 

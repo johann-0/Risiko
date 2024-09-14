@@ -1,9 +1,11 @@
 extends Node2D
 
-var DEBUG_MODE: bool = false
+var DEBUG_MODE: bool = true
 signal new_loc_sel_prov(old_prov_id: int, new_prov_id: int)
 signal new_glo_sel_prov(old_prov_id: int, new_prov_id: int)
 signal new_glo_mov_prov(old_prov_id: int, new_prov_id: int)
+signal end_turn(old_idx:int, new_idx:int, idx_chgd:bool \
+  , old_phase:Phase, new_phase:Phase, phase_changed:bool)
 signal new_turn(old_idx:int, new_idx:int, idx_chgd:bool \
   , old_phase:Phase, new_phase:Phase, phase_changed:bool)
 signal new_phase(old_phase: Phase, new_phase: Phase, phase_changed: bool)
@@ -13,7 +15,7 @@ const SEL_COLOR: Color = Color8(255, 255, 255, 100)
 const NEIGH_COLOR: Color = Color8(255, 255, 255, 50)
 const GAME_SEL_COLOR: Color = Color8(0, 255, 0, 100)
 const GAME_ATT_COLOR: Color = Color8(255, 0, 0, 100)
-const COLORS: Array = [Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW]
+const COLORS: Array[Color] = [Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW]
 var NUM_PROV: int = 0
 
 var provinces: Array[Province] = []
@@ -33,27 +35,29 @@ func players_to_string() -> String:
 
 @onready var client: UDP_client
 var server_addr: String = DEF_SERVER_ADDR
-var host_player_id: int = 0
+#var host_player_id: int = 0 # don't think this is important
 
 var cur_phase: Phase = Phase.main_menu
+var dep_avail_sols: int = 0 # for deploying phases
+var for_already_moved: bool = false # for fortifying phase
 
 enum Phase { main_menu, lobby, init_deploy, deploy, attack, fortify}
 
-var loc_sel_prov: int = Province.WASTELAND_ID: # local_selected_province_id
-	set(new_val):
-		if new_val == loc_sel_prov: return
-		var old_val = loc_sel_prov; loc_sel_prov = new_val
-		new_loc_sel_prov.emit(old_val, new_val)
-var glo_sel_prov: int = Province.WASTELAND_ID: # global_selected_province_id
-	set(new_val):
-		if new_val == glo_sel_prov: return
-		var old_val = glo_sel_prov; glo_sel_prov = new_val
-		new_glo_sel_prov.emit(old_val, new_val)
-var glo_mov_prov: int = Province.WASTELAND_ID: # global_move_to_province_id
-	set(new_val):
-		if new_val == glo_mov_prov: return
-		var old_val = glo_mov_prov; glo_mov_prov = new_val
-		new_glo_mov_prov.emit(old_val, new_val)
+var loc_sel_prov: int = Province.WASTELAND_ID#: # local_selected_province_id
+	#set(new_val):
+		#if new_val == loc_sel_prov: return
+		#var old_val = loc_sel_prov; loc_sel_prov = new_val
+		#new_loc_sel_prov.emit(old_val, new_val)
+var glo_sel_prov: int = Province.WASTELAND_ID#: # global_selected_province_id
+	#set(new_val):
+		#if new_val == glo_sel_prov: return
+		#var old_val = glo_sel_prov; glo_sel_prov = new_val
+		#new_glo_sel_prov.emit(old_val, new_val)
+var glo_mov_prov: int = Province.WASTELAND_ID#: # global_move_to_province_id
+	#set(new_val):
+		#if new_val == glo_mov_prov: return
+		#var old_val = glo_mov_prov; glo_mov_prov = new_val
+		#new_glo_mov_prov.emit(old_val, new_val)
 var loc_player_ind: int = -1 # local_player_id
 var glo_player_ind: int = -1 # global_player_id
 func is_loc_players_turn() -> bool:
@@ -66,6 +70,39 @@ func _ready():
 	var p_name = "player_" + str(abs(randi() % 100))
 	GameData.loc_player_ind = 0
 	GameData.players.append(Player.new(0, p_name, Color.AZURE))
+
+func calculate_soldiers(player_ind: int) -> int:
+	var soldiers: int = 0
+	## base: floor(owned_provinces / 3)
+	var owned_provs: int = 0
+	for province in GameData.provinces:
+		if province.owner == player_ind:
+			owned_provs += 1
+	soldiers += owned_provs / 3
+	## plus continent bonuses
+	#...
+	if soldiers < 3:
+		soldiers = 3
+	return soldiers
+
+func are_provs_neighbors(prov1: int, prov2: int):
+	var prov1_owner: int = provinces[prov1]._owner
+	var reachable_provs: Array[bool] = [] # holds info on reached provinces
+	reachable_provs.resize(NUM_PROV)
+	reachable_provs.fill(false)
+	reachable_provs[prov1] = true
+	var queue: Array[int] = [prov1]
+	while not queue.is_empty():
+		var cur_prov = queue.pop_front()
+		if cur_prov == prov2:
+			return true
+		for neighbor_id in provinces[cur_prov]._neighbors:
+			if provinces[neighbor_id]._owner != prov1_owner:
+				continue
+			if reachable_provs[neighbor_id] == false:
+				reachable_provs[neighbor_id] = true
+				queue.append(neighbor_id)
+	return false
 
 func get_provinces_from_json() -> void:
 	var file = FileAccess.open("res://Assets/provinces.json", FileAccess.READ)

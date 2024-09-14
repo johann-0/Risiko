@@ -57,8 +57,8 @@ layout_mode = 2
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 theme = ExtResource("2_8jt8f")
-text = "If hosting only the port matters,
-if joining then address and port:"
+text = "If joining: enter address and port
+If hosting: only the port matters"
 horizontal_alignment = 2
 
 [node name="Address" type="LineEdit" parent="EnterInfo/Address"]

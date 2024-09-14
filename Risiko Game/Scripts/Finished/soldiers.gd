@@ -56,7 +56,7 @@ static func new_soldier(_prov_id: int, _facing_right: bool) -> Soldier_UI:
 	toRet.facing_right = _facing_right
 	toRet.prov_id = _prov_id
 	GameData.provinces[_prov_id].infoUpdated.connect(toRet.updateInfo)
-	toRet.position = GameData.provinces[_prov_id]._center
+	toRet.position = GameData.provinces[_prov_id].center
 	
 	toRet.updateInfo(_prov_id)
 	

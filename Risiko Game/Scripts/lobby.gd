@@ -51,7 +51,7 @@ func joined_lobby(player_name: String, player_id: int) -> void:
 		var i: int = 1
 		for peer_id in GameData.multiplayer.get_peers():
 			send_lobby_data.rpc_id(peer_id, GameData.gplayers_to_JSON(), i, random_deployment)
-			++i
+			i += 1
 		# Update UI
 		update_ui()
 
@@ -128,11 +128,48 @@ func on_random_deployment_toggled(_newVal: bool) -> void:
 
 func on_start_button_pressed() -> void:
 	if GameData.multiplayer.is_server():
-		start_game.rpc()
+		# Shuffle the players around
+		var p_name = GameData.players[GameData.loc_player_ind].name
+		GameData.players.shuffle()
+		var i: int = 0
+		for player in GameData.players:
+			if player.name == p_name:
+				GameData.loc_player_ind = i; break
+			i += 1
+		# Assign colors to those who have picked azure
+		var avail_colors: Array[Color] = GameData.COLORS.duplicate()
+		for player in GameData.players:
+			if player.color != Color.AZURE:
+				var ind: int = avail_colors.find(player.color)
+				avail_colors.remove_at(ind)
+		avail_colors.shuffle()
+		for player in GameData.players:
+			if player.color == Color.AZURE:
+				player.color = avail_colors.pop_front()
+		
+		if random_deployment == true:
+			start_game.rpc(GameData.Phase.deploy, GameData.gplayers_to_JSON())
+		else:
+			start_game.rpc(GameData.Phase.init_deploy, GameData.gplayers_to_JSON())
 
 @rpc("call_local", "authority")
-func start_game() -> void:
-	print("start_game()")
+func start_game(new_phase: GameData.Phase, players_as_json: Array) -> void:
+	# Find out where loc_player_ind is
+	#print("0. name: " + GameData.players[GameData.loc_player_ind].name)
+	#print("1. local player index: " + str(GameData.loc_player_ind))
+	var p_name: String = GameData.players[GameData.loc_player_ind].name
+	GameData.players = GameData.players_from_JSON(players_as_json)
+	var i: int = 0
+	for player in GameData.players:
+		if player.name == p_name:
+			GameData.loc_player_ind = i; break
+		i += 1
+	GameData.glo_player_ind = 0
+	GameData.cur_phase = new_phase
+	print("GAME STARTED!")
+	#print(players_as_json)
+	#print("2. local player index: " + str(GameData.loc_player_ind))
+	get_tree().change_scene_to_file("res://Scenes/game.tscn")
 
 @rpc("call_remote", "authority")
 func toggle_random_deployment(_new_val: bool) -> void:

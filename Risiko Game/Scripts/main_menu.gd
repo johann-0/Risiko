@@ -14,6 +14,10 @@ func _ready() -> void:
 	address_lab.text = GameData.server_addr
 	player_lab.text = GameData.players[0].name
 	set_status("", "", Color.BLACK)
+	
+	#if GameData.DEBUG_MODE == true:
+		#await get_tree().create_timer(0.1).timeout
+		#_on_host_pressed()
 
 func _on_join_pressed() -> void:
 	if $EnterInfo/Player/PlayerName["theme_override_colors/font_color"] == Color.RED:

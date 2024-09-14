@@ -3,6 +3,7 @@ extends Node
 
 @onready var peer: ENetMultiplayerPeer = null
 @onready var g_multiplayer = GameData.multiplayer
+@onready var id: int = 0
 @onready var disconnected_reason: String = "unknown"
 
 signal peer_connected(id: int)
@@ -41,7 +42,7 @@ func on_peer_disconnected(_id: int) -> void:
 	peer_disconnected.emit(_id)
 
 func on_connected_to_server() -> void:
-	#DEBUGid = g_multiplayer.get_unique_id()
+	id = g_multiplayer.get_unique_id()
 	id_print("connected_to_server")
 	connected_to_server.emit()
 
@@ -51,7 +52,7 @@ func on_connection_failed() -> void:
 
 func on_disconnected_from_server() -> void:
 	id_print("server_disconnected (" + disconnected_reason + ")")
-	#DEBUGid = 0
+	id = 0
 	disconnected_from_server.emit()
 
 func close_connection() -> void:
@@ -73,7 +74,7 @@ func make_server(address: String) -> void:
 		return
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
 	g_multiplayer.set_multiplayer_peer(peer)
-	#DEBUGid = g_multiplayer.get_unique_id()
+	id = g_multiplayer.get_unique_id()
 	id_print("Server started: " + GameData.server_addr)
 
 func make_client(address: String) -> void:
@@ -89,11 +90,11 @@ func make_client(address: String) -> void:
 		printerr("Error while creating client (" + str(err) + ")")
 		return
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
-	#DEBUGid = g_multiplayer.get_unique_id()
 	g_multiplayer.set_multiplayer_peer(peer)
+	id = g_multiplayer.get_unique_id()
 
 func id_print(text: String) -> void:
-	pass#DEBUGprint("[" + str(id) + "] " + text)
+	print("[" + str(id) + "] " + text)
 
 func get_port_and_address(address: String) -> Array[String]:
 	var toReturn: Array[String] = ["",""]

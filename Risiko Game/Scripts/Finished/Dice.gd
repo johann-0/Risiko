@@ -43,14 +43,14 @@ func show_dice(_attacking: int, _defending: int) -> void:
 	for i in range(3):
 		if i < num_attacking:
 			if children[i].visible == false:
-				children[i].randomify()
+				children[i].randomize_num()
 				children[i].show()
 		else:
 			children[i].hide()
 	for i in range(3, 3 + 2):
-		if i < num_defending:
+		if i < num_defending + 3:
 			if children[i].visible == false:
-				children[i].randomify()
+				children[i].randomize_num()
 				children[i].show()
 		else:
 			children[i].hide()

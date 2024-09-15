@@ -32,26 +32,26 @@ func disconnect_client(_id: int, _reason: String):
 	peer.disconnect_peer(_id)
 
 func on_peer_connected(_id: int) -> void:
-	id_print("peer_connected: " + str(_id))
+	GameData.id_print("peer_connected: " + str(_id))
 	peer_connected.emit(_id)
 	#if g_multiplayer.is_server(): # DEBUG
 		#disconnect_client(_id, "Test") # DEBUG
 
 func on_peer_disconnected(_id: int) -> void:
-	id_print("peer_disconnected: " + str(_id))
+	GameData.id_print("peer_disconnected: " + str(_id))
 	peer_disconnected.emit(_id)
 
 func on_connected_to_server() -> void:
 	id = g_multiplayer.get_unique_id()
-	id_print("connected_to_server")
+	GameData.id_print("connected_to_server")
 	connected_to_server.emit()
 
 func on_connection_failed() -> void:
-	id_print("connection_failed")
+	GameData.id_print("connection_failed")
 	connection_failed.emit()
 
 func on_disconnected_from_server() -> void:
-	id_print("server_disconnected (" + disconnected_reason + ")")
+	GameData.id_print("server_disconnected (" + disconnected_reason + ")")
 	id = 0
 	disconnected_from_server.emit()
 
@@ -75,7 +75,7 @@ func make_server(address: String) -> void:
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
 	g_multiplayer.set_multiplayer_peer(peer)
 	id = g_multiplayer.get_unique_id()
-	id_print("Server started: " + GameData.server_addr)
+	GameData.id_print("Server started: " + GameData.server_addr)
 
 func make_client(address: String) -> void:
 	var returned: Array[String] = get_port_and_address(address)
@@ -92,9 +92,6 @@ func make_client(address: String) -> void:
 	peer.get_host().compress(ENetConnection.COMPRESS_ZSTD)
 	g_multiplayer.set_multiplayer_peer(peer)
 	id = g_multiplayer.get_unique_id()
-
-func id_print(text: String) -> void:
-	print("[" + str(id) + "] " + text)
 
 func get_port_and_address(address: String) -> Array[String]:
 	var toReturn: Array[String] = ["",""]

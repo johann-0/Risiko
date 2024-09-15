@@ -43,7 +43,7 @@ func _ready() -> void:
 		if g_multiplayer.is_server():
 			await get_tree().create_timer(0.1).timeout
 			on_random_deployment_toggled(true)
-			await get_tree().create_timer(0.5).timeout
+			await get_tree().create_timer(1.0).timeout
 			on_start_button_pressed()
 
 @rpc("any_peer", "call_remote")

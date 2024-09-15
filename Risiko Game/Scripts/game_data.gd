@@ -39,7 +39,8 @@ var server_addr: String = DEF_SERVER_ADDR
 
 var cur_phase: Phase = Phase.main_menu
 var dep_avail_sols: int = 0 # for deploying phases
-var for_already_moved: bool = false # for fortifying phase
+var fort_already_moved: bool = false # for fortifying phase
+var in_a_battle: bool = false
 
 enum Phase { main_menu, lobby, init_deploy, deploy, attack, fortify}
 
@@ -93,7 +94,7 @@ func calculate_soldiers(player_ind: int) -> int:
 	soldiers += owned_provs / 3
 	return max(soldiers, 3) # min of 3 soldiers per player
 
-func are_provs_neighbors(prov1: int, prov2: int):
+func are_provs_neighbors(prov1: int, prov2: int) -> bool:
 	var prov1_owner: int = provinces[prov1].owner
 	var reachable_provs: Array[bool] = [] # holds info on reached provinces
 	reachable_provs.resize(NUM_PROV)
@@ -111,6 +112,9 @@ func are_provs_neighbors(prov1: int, prov2: int):
 				reachable_provs[neighbor_id] = true
 				queue.append(neighbor_id)
 	return false
+
+func id_print(text: String) -> void:
+	print("[" + str(multiplayer.get_unique_id()) + "] " + text)
 
 func get_provinces_from_json() -> void:
 	var file = FileAccess.open("res://Assets/provinces.json", FileAccess.READ)

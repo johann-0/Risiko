@@ -8,15 +8,13 @@ var name: String
 var neighbors: Array
 var center: Vector2
 
-var owner: int#:
-	#set(newVal):
-		#owner = newVal; infoUpdated.emit(id)
-var soldiers: int#:
-	#set(newVal):
-		#owner = newVal; infoUpdated.emit(id);
-var to_add: int#:
-	#set(newVal):
-		#owner = newVal; infoUpdated.emit(id)
+var owner: int
+var soldiers: int
+var to_add: int
+
+func commit_add() -> void:
+	soldiers += to_add
+	to_add = 0
 
 func check_if_empty() -> void:
 	if soldiers + to_add == 0:

@@ -1,9 +1,7 @@
 extends Sprite2D
 
-var input_disabled = false
-
 func _unhandled_input(event):
-	if input_disabled == true:
+	if GameData.in_a_battle == true:
 		return
 	
 	if event is InputEventMouseButton:
@@ -21,7 +19,10 @@ func _unhandled_input(event):
 		
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			Commander.add_command(ProvinceSelected.new([id, true]))
-			
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			Commander.add_command(ProvinceSelected.new([id, false]))
+		
+		
 			#if GameData.glo_mov_prov != -1:
 				#GameData.glo_mov_prov = -1
 			#if id < 0 or id >= GameData.NUM_PROV or color.g != 0 or color.b != 0:
@@ -29,33 +30,33 @@ func _unhandled_input(event):
 			#else:
 				#print("{ id: " + str(id) + ", " + str(GameData.provinces[id].name) + " }\n")
 				#GameData.loc_sel_prov = id
-		
-		elif event.button_index == MOUSE_BUTTON_RIGHT \
-		  and GameData.glo_player_ind == GameData.loc_player_ind:
-			if GameData.cur_phase == GameData.Phase.attack:
-				if id >= 0 and id < GameData.NUM_PROV and color.g == 0 and color.b == 0 \
-				  and GameData.provinces[id].owner != GameData.loc_player_ind \
-				  and GameData.provinces[GameData.loc_sel_prov].owner == GameData.loc_player_ind \
-				  and GameData.provinces[GameData.loc_sel_prov].soldiers > 1:
-					var isNeighboringProvince = false
-					for neighbor_index in GameData.provinces[GameData.loc_sel_prov].neighbors:
-						if neighbor_index == id:
-							isNeighboringProvince = true
-					if isNeighboringProvince:
-						GameData.glo_mov_prov = id
-					else:
-						GameData.glo_mov_prov = -1
-				else:
-					GameData.glo_mov_prov = -1
-			
-			elif GameData.cur_phase == GameData.Phase.fortify \
-			  and GameData.already_moved == false:
-				if id >= 0 and id < GameData.NUM_PROV and color.g == 0 and color.b == 0 \
-				  and GameData.loc_player_ind == GameData.provinces[id].owner \
-				  and GameData.loc_player_ind == GameData.provinces[GameData.selectedProvID].owner \
-				  and GameData.provinces[GameData.selectedProvID].soldiers > 1 \
-				  and GameData.are_provs_neighbors(GameData.selectedProvID, id):
-					print("new move prov_id: " + str(id))
-					GameData.glo_mov_prov = id
-				else:
-					GameData.glo_mov_prov = -1
+		#
+		#elif event.button_index == MOUSE_BUTTON_RIGHT \
+		  #and GameData.glo_player_ind == GameData.loc_player_ind:
+			#if GameData.cur_phase == GameData.Phase.attack:
+				#if id >= 0 and id < GameData.NUM_PROV and color.g == 0 and color.b == 0 \
+				  #and GameData.provinces[id].owner != GameData.loc_player_ind \
+				  #and GameData.provinces[GameData.loc_sel_prov].owner == GameData.loc_player_ind \
+				  #and GameData.provinces[GameData.loc_sel_prov].soldiers > 1:
+					#var isNeighboringProvince = false
+					#for neighbor_index in GameData.provinces[GameData.loc_sel_prov].neighbors:
+						#if neighbor_index == id:
+							#isNeighboringProvince = true
+					#if isNeighboringProvince:
+						#GameData.glo_mov_prov = id
+					#else:
+						#GameData.glo_mov_prov = -1
+				#else:
+					#GameData.glo_mov_prov = -1
+			#
+			#elif GameData.cur_phase == GameData.Phase.fortify \
+			  #and GameData.already_moved == false:
+				#if id >= 0 and id < GameData.NUM_PROV and color.g == 0 and color.b == 0 \
+				  #and GameData.loc_player_ind == GameData.provinces[id].owner \
+				  #and GameData.loc_player_ind == GameData.provinces[GameData.selectedProvID].owner \
+				  #and GameData.provinces[GameData.selectedProvID].soldiers > 1 \
+				  #and GameData.are_provs_neighbors(GameData.selectedProvID, id):
+					#print("new move prov_id: " + str(id))
+					#GameData.glo_mov_prov = id
+				#else:
+					#GameData.glo_mov_prov = -1

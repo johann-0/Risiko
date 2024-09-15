@@ -1,6 +1,6 @@
 extends Camera2D
 
-@export var CAM_SPEED = 600.0
+@export var CAM_SPEED = 700.0
 @export var ZOOM_SPEED = 1.4
 const ZOOM_MIN = 1.1
 const ZOOM_MAX = 7

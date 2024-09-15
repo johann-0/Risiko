@@ -14,7 +14,10 @@ func process() -> void:
 			if GameData.is_loc_players_turn():
 				Commander.remote_add_command.rpc(to_array())
 		GameData.Phase.attack:
-			pass
+			if GameData.is_loc_players_turn():
+				Commander.remote_add_command.rpc(to_array())
+			elif GameData.glo_mov_prov != -1 and GameData.provinces[GameData.glo_mov_prov].owner == GameData.loc_player_ind:
+				Commander.remote_add_command.rpc(ProvinceSelected.new([GameData.glo_mov_prov, is_up_pressed]).to_array())
 		GameData.Phase.fortify:
 			pass
 		_:
@@ -36,21 +39,48 @@ func remote_process() -> void:
 					cur_prov.check_if_empty()
 					GameData.dep_avail_sols += 1
 					cur_prov.emit_updated()
+		
 		GameData.Phase.deploy:
+			if cur_prov.owner != GameData.glo_player_ind:
+				return
 			if is_up_pressed:
-				if GameData.dep_avail_sols > 0 and cur_prov.owner == GameData.glo_player_ind:
+				if GameData.dep_avail_sols > 0:
 					cur_prov.to_add += 1
 					cur_prov.owner = GameData.glo_player_ind
 					GameData.dep_avail_sols -= 1
 					cur_prov.emit_updated()
 			else:
-				if cur_prov.to_add > 0 and cur_prov.owner == GameData.glo_player_ind:
+				if cur_prov.to_add > 0:
 					cur_prov.to_add -= 1
 					cur_prov.check_if_empty()
 					GameData.dep_avail_sols += 1
 					cur_prov.emit_updated()
+		
 		GameData.Phase.attack:
-			pass
+			if GameData.glo_mov_prov == -1 or GameData.provinces[GameData.glo_sel_prov].owner != GameData.glo_player_ind:
+				return
+			## If attacking
+			if prov_id == GameData.glo_sel_prov:
+				if is_up_pressed and cur_prov.soldiers > 1:
+					cur_prov.soldiers -= 1
+					cur_prov.to_add += 1
+					cur_prov.emit_updated()
+				elif not is_up_pressed and cur_prov.to_add > 1:
+					cur_prov.soldiers += 1
+					cur_prov.to_add -= 1
+					cur_prov.emit_updated()
+			## If being attacked TODO: test this out
+			elif prov_id == GameData.glo_mov_prov and GameData.glo_mov_prov != -1 \
+			  and GameData.provinces[GameData.glo_mov_prov].owner == GameData.loc_player_ind:
+				var attacked_prov: Province = GameData.provinces[GameData.glo_mov_prov]
+				if is_up_pressed and attacked_prov.soldiers > 0:
+					cur_prov.soldiers -= 1
+					cur_prov.to_add += 1
+					cur_prov.emit_updated()
+				elif not is_up_pressed and cur_prov.to_add > 1:
+					cur_prov.soldiers += 1
+					cur_prov.to_add -= 1
+					cur_prov.emit_updated()
 		GameData.Phase.fortify:
 			pass
 		_:

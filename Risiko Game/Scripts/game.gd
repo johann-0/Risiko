@@ -21,17 +21,6 @@ func _ready() -> void:
 	else:
 		## Update game data and UI
 		on_end_turn(-1, 0, GameData.Phase.lobby, GameData.cur_phase)
-	
-	if false:
-		var i: int = 0
-		for province in GameData.provinces:
-			await get_tree().create_timer(0.2).timeout
-			Commander.add_command(ProvinceSelected.new([i,true]))
-			await get_tree().create_timer(0.2).timeout
-			Commander.add_command(UpOrDownPressed.new([i, true]))
-			await get_tree().create_timer(0.2).timeout
-			Commander.add_command(EndTurnPressed.new([]))
-			i += 1
 
 func distribute_provinces() -> void:
 	var prov_owners: Array = []
@@ -84,15 +73,15 @@ func on_end_turn(old_idx:int, new_idx:int \
 	
 	match new_phase:
 		GameData.Phase.init_deploy:
+			id_print("Phase: INIT_DEPLOYYY")
 			GameData.dep_avail_sols = 1
 		GameData.Phase.deploy:
-			print("Phase: DEPLOYYY")
+			id_print("Phase: DEPLOYYY")
 			GameData.dep_avail_sols = GameData.calculate_soldiers(GameData.glo_player_ind)
-			print(GameData.dep_avail_sols)
 		GameData.Phase.attack:
-			pass
+			id_print("Phase: ATAKK")
 		GameData.Phase.fortify:
-			pass
+			id_print("Phase: PORTIFY")
 		_:
 			pass
 	## Update UI
@@ -114,3 +103,6 @@ func on_peer_disconnected(_id: int) -> void:
 	pass
 func on_disconnected_from_server() -> void:
 	pass
+
+func id_print(text: String)->void:
+	GameData.id_print(text)

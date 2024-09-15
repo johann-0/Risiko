@@ -11,7 +11,6 @@ func add_command(command: BaseCommand):
 
 @rpc("any_peer","call_local")
 func remote_add_command(com_arr: Array):
-	print("remoted")
 	var rem_command: BaseCommand = null
 	match com_arr[0]:
 		Commands.ProvSel:

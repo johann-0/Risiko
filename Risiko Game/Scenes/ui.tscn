@@ -171,8 +171,10 @@ anchors_preset = -1
 offset_left = 254.0
 offset_right = 288.0
 offset_bottom = 13.0
+grow_horizontal = 0
 theme = ExtResource("9_k1qyu")
 text = "End Turn"
+alignment = 2
 
 [node name="Dice" type="Control" parent="Screen"]
 anchors_preset = 0

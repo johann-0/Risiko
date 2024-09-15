@@ -15,9 +15,13 @@ func _ready() -> void:
 	player_lab.text = GameData.players[0].name
 	set_status("", "", Color.BLACK)
 	
-	#if GameData.DEBUG_MODE == true:
-		#await get_tree().create_timer(0.1).timeout
-		#_on_host_pressed()
+	if GameData.DEBUG_MODE == true:
+		if OS.get_cmdline_args()[1] == "0":
+			await get_tree().create_timer(0.1).timeout
+			_on_host_pressed()
+		else:
+			await get_tree().create_timer(0.3).timeout
+			_on_join_pressed()
 
 func _on_join_pressed() -> void:
 	if $EnterInfo/Player/PlayerName["theme_override_colors/font_color"] == Color.RED:

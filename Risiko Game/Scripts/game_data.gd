@@ -4,24 +4,24 @@ var DEBUG_MODE: bool = true
 signal new_loc_sel_prov(old_prov_id: int, new_prov_id: int)
 signal new_glo_sel_prov(old_prov_id: int, new_prov_id: int)
 signal new_glo_mov_prov(old_prov_id: int, new_prov_id: int)
-signal end_turn(old_idx:int, new_idx:int, idx_chgd:bool \
-  , old_phase:Phase, new_phase:Phase, phase_changed:bool)
-signal new_turn(old_idx:int, new_idx:int, idx_chgd:bool \
-  , old_phase:Phase, new_phase:Phase, phase_changed:bool)
-signal new_phase(old_phase: Phase, new_phase: Phase, phase_changed: bool)
+signal end_turn(old_idx:int, new_idx:int \
+  , old_phase:Phase, new_phase:Phase)
+signal new_turn(old_idx:int, new_idx:int \
+  , old_phase:Phase, new_phase:Phase)
+#signal new_phase(old_phase: Phase, new_phase: Phase)
 
 const DEF_SERVER_ADDR: String = "192.168.0.166:8080"
 const SEL_COLOR: Color = Color8(255, 255, 255, 100)
 const NEIGH_COLOR: Color = Color8(255, 255, 255, 50)
 const GAME_SEL_COLOR: Color = Color8(0, 255, 0, 100)
-const GAME_ATT_COLOR: Color = Color8(255, 0, 0, 100)
+const GAME_MOV_COLOR: Color = Color8(255, 0, 0, 100)
 const COLORS: Array[Color] = [Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW]
 var NUM_PROV: int = 0
 
 var provinces: Array[Province] = []
 var players: Array[Player] = []
 func gplayers_to_JSON() -> Array:
-	var toReturn = []
+	var toReturn: Array = []
 	for player in players:
 		toReturn.append(player._to_JSON())
 	return toReturn
@@ -73,20 +73,28 @@ func _ready():
 
 func calculate_soldiers(player_ind: int) -> int:
 	var soldiers: int = 0
-	## base: floor(owned_provinces / 3)
+	#                 Continents: [na, sa, af, eu, ai, oc]
+	var last_provs: Array[int]  = [ 8, 12, 18, 25, 37, 41]
+	var bonuses: Array[int]     = [ 5,  2,  3,  5,  7,  2]
 	var owned_provs: int = 0
-	for province in GameData.provinces:
-		if province.owner == player_ind:
+	var cont_full: bool = true
+	var cont_ind: int = 0
+	for prov in GameData.provinces:
+		if prov.owner == player_ind:
 			owned_provs += 1
+		else:
+			cont_full = false
+		if prov.id == last_provs[cont_ind]:
+			if cont_full == true:
+				soldiers += bonuses[cont_ind]
+			cont_ind += 1
+			cont_full = true
+	@warning_ignore("integer_division")
 	soldiers += owned_provs / 3
-	## plus continent bonuses
-	#...
-	if soldiers < 3:
-		soldiers = 3
-	return soldiers
+	return max(soldiers, 3) # min of 3 soldiers per player
 
 func are_provs_neighbors(prov1: int, prov2: int):
-	var prov1_owner: int = provinces[prov1]._owner
+	var prov1_owner: int = provinces[prov1].owner
 	var reachable_provs: Array[bool] = [] # holds info on reached provinces
 	reachable_provs.resize(NUM_PROV)
 	reachable_provs.fill(false)
@@ -96,8 +104,8 @@ func are_provs_neighbors(prov1: int, prov2: int):
 		var cur_prov = queue.pop_front()
 		if cur_prov == prov2:
 			return true
-		for neighbor_id in provinces[cur_prov]._neighbors:
-			if provinces[neighbor_id]._owner != prov1_owner:
+		for neighbor_id in provinces[cur_prov].neighbors:
+			if provinces[neighbor_id].owner != prov1_owner:
 				continue
 			if reachable_provs[neighbor_id] == false:
 				reachable_provs[neighbor_id] = true

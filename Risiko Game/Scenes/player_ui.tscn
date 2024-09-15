@@ -16,7 +16,6 @@ offset_right = 83.0
 offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
 script = ExtResource("1_74g0x")
 
 [node name="BackgorundBorder" type="ColorRect" parent="."]

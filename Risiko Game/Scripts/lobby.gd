@@ -38,6 +38,13 @@ func _ready() -> void:
 		joined_lobby.rpc_id(1, GameData.players[0].name, g_multiplayer.get_unique_id())
 	else:
 		update_players_ui()
+	
+	if GameData.DEBUG_MODE == true:
+		if g_multiplayer.is_server():
+			await get_tree().create_timer(0.1).timeout
+			on_random_deployment_toggled(true)
+			await get_tree().create_timer(0.5).timeout
+			on_start_button_pressed()
 
 @rpc("any_peer", "call_remote")
 func joined_lobby(player_name: String, player_id: int) -> void:

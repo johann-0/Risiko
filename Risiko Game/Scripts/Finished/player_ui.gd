@@ -38,7 +38,7 @@ func reset_text_color() -> void:
 func is_players_turn():
 	set_background_color(Color.WHITE)
 	set_text_color(Color.BLACK)
-func is_not_player_turn():
+func is_not_players_turn():
 	reset_background_color()
 	reset_text_color()
 

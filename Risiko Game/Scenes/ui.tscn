@@ -186,7 +186,6 @@ mouse_filter = 2
 script = ExtResource("13_p0flr")
 
 [node name="Attack1" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
-modulate = Color(0.8, 1, 0.8, 1)
 layout_mode = 1
 anchors_preset = 0
 anchor_right = 0.0
@@ -200,7 +199,6 @@ grow_vertical = 1
 texture = SubResource("AtlasTexture_ppynv")
 
 [node name="Attack2" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
-modulate = Color(0.8, 1, 0.8, 1)
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -214,7 +212,6 @@ grow_vertical = 1
 texture = SubResource("AtlasTexture_tjdjh")
 
 [node name="Attack3" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
-modulate = Color(0.8, 1, 0.8, 1)
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -228,7 +225,6 @@ grow_vertical = 1
 texture = SubResource("AtlasTexture_wbmjo")
 
 [node name="Defend1" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
-modulate = Color(1, 0.76, 0.76, 1)
 layout_mode = 1
 anchors_preset = 0
 anchor_right = 0.0
@@ -242,7 +238,6 @@ grow_vertical = 1
 texture = SubResource("AtlasTexture_46lq6")
 
 [node name="Defend2" parent="Screen/Dice" instance=ExtResource("14_x7tht")]
-modulate = Color(1, 0.76, 0.76, 1)
 layout_mode = 1
 anchors_preset = 0
 anchor_right = 0.0

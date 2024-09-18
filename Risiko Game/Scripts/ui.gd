@@ -5,6 +5,10 @@ func _ready() -> void:
 	$Screen/EndTurn.pressed.connect(on_end_turn_pressed)
 	GameData.new_loc_sel_prov.connect(on_new_loc_sel_prov)
 	GameData.new_turn.connect(on_new_turn)
+	GameData.disable_ui.connect(on_disable_ui)
+	GameData.enable_ui.connect(on_enable_ui)
+	GameData.start_dice.connect(on_start_dice)
+	GameData.stop_dice.connect(on_stop_dice)
 	for province in GameData.provinces:
 		province.infoUpdated.connect(on_prov_info_updated)
 	
@@ -42,6 +46,19 @@ func on_prov_info_updated(prov_id: int) -> void:
 	#else:
 		#$Screen/EndTurn.show()
 
+func on_disable_ui() -> void:
+	$Screen/EndTurn.disabled = true
+
+func on_start_dice() -> void:
+	$Screen/Dice.roll_dice(true)
+
+func on_stop_dice(dice: Array[int]) -> void:
+	$Screen/Dice.stop_rolling()
+	$Screen/Dice.set_dice(dice)
+
+func on_enable_ui() -> void:
+	$Screen/EndTurn.disabled = false
+
 func update_dice() -> void:
 	if GameData.cur_phase != GameData.Phase.attack \
 	  or GameData.glo_mov_prov == -1 \
@@ -53,7 +70,8 @@ func update_dice() -> void:
 	var attacked_prov = GameData.provinces[GameData.glo_mov_prov]
 	#if GameData.localPlayerIndex != GameData.turnPlayerIndex: # DEBUG
 		#print("att: " + str(sel_prov._to_add) + ". def: " + str(attacked_prov._to_add))
-	$Screen/Dice.show_dice(sel_prov.to_add, attacked_prov.to_add)
+	$Screen/Dice.show_dice(sel_prov.to_add, attacked_prov.to_add \
+		, GameData.players[sel_prov.owner].color, GameData.players[attacked_prov.owner].color)
 
 func on_new_turn(oldIndex: int, newIndex: int \
   , oldPhase: GameData.Phase, newPhase: GameData.Phase) -> void: 
@@ -62,7 +80,7 @@ func on_new_turn(oldIndex: int, newIndex: int \
 	if newIndex != -1:
 		$Screen/Players.get_child(newIndex).is_players_turn()
 	
-	$Screen/UpperBanner/TurnStat/Value.text = GameData.Phase.find_key(newPhase)
+	$Screen/UpperBanner/TurnStat/Value.text = ": " + GameData.Phase.find_key(newPhase)
 	
 	if newIndex == GameData.loc_player_ind:
 		$Screen/EndTurn.show()

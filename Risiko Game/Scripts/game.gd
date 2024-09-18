@@ -91,9 +91,16 @@ func _unhandled_input(_event) -> void:
 	if _event is InputEventKey:
 		if GameData.loc_sel_prov != -1:
 			if _event.is_action_pressed("down"):
-				Commander.add_command(UpOrDownPressed.new([GameData.loc_sel_prov, true]))
-			elif _event.is_action_pressed("up"):
 				Commander.add_command(UpOrDownPressed.new([GameData.loc_sel_prov, false]))
+			elif _event.is_action_pressed("up"):
+				Commander.add_command(UpOrDownPressed.new([GameData.loc_sel_prov, true]))
+		if _event.is_action_pressed("endTurn") and $Control/Screen/EndTurn.disabled == false \
+		  and GameData.is_loc_players_turn():
+			Commander.add_command(EndTurnPressed.new([]))
+		elif _event.is_action_pressed("execute"):
+			var att_num: int = GameData.provinces[GameData.glo_sel_prov].to_add
+			var def_num: int = GameData.provinces[GameData.glo_mov_prov].to_add
+			Commander.add_command(ExecutePressed.new([]))
 
 func on_peer_connected(id: int) -> void:
 	if g_multiplayer.is_server():

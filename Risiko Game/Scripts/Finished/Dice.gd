@@ -16,18 +16,16 @@ func priv_hide_children() -> void:
 	for die in children:
 		die.hide()
 
-func roll_dice(_randomify: bool) -> void:
+func roll_dice(_roll_randomly: bool) -> void:
 	isRolling = true
 	for die in children:
 		if !die.visible:
 			continue
-		die.roll(_randomify)
+		die.roll(_roll_randomly)
 
 func stop_rolling() -> void:
 	isRolling = false
 	for die in children:
-		if !die.visible:
-			continue
 		die.stop_roll()
 
 func hide_dice() -> void:
@@ -36,24 +34,29 @@ func hide_dice() -> void:
 	num_defending = 0
 	priv_hide_children()
 
-func show_dice(_attacking: int, _defending: int) -> void:
+func show_dice(_attacking: int, _defending: int, _att_color: Color, _def_color: Color) -> void:
 	isHidden = false
 	num_attacking = _attacking
 	num_defending = _defending
+	
 	for i in range(3):
+		var cur_die: Die = children[i]
 		if i < num_attacking:
-			if children[i].visible == false:
-				children[i].randomize_num()
-				children[i].show()
+			if cur_die.visible == false:
+				cur_die.randomize_num()
+				cur_die.show()
 		else:
-			children[i].hide()
+			cur_die.hide()
+		cur_die.modulate = _att_color.lightened(0.75)
 	for i in range(3, 3 + 2):
+		var cur_die: Die = children[i]
 		if i < num_defending + 3:
-			if children[i].visible == false:
-				children[i].randomize_num()
-				children[i].show()
+			if cur_die.visible == false:
+				cur_die.randomize_num()
+				cur_die.show()
 		else:
 			children[i].hide()
+		cur_die.modulate = _def_color.lightened(0.75)
 
 func set_dice(_data: Array[int]) -> void:
 	for i in range(_data.size()):

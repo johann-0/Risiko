@@ -1,7 +1,19 @@
 extends Sprite2D
 
+var ui_enabled: bool = true
+
+func _ready() -> void:
+	GameData.enable_ui.connect(on_enable_ui)
+	GameData.disable_ui.connect(on_disable_ui)
+
+func on_enable_ui() -> void:
+	ui_enabled = true
+
+func on_disable_ui() -> void:
+	ui_enabled = false
+
 func _unhandled_input(event):
-	if GameData.in_a_battle == true:
+	if ui_enabled == false:
 		return
 	
 	if event is InputEventMouseButton:
